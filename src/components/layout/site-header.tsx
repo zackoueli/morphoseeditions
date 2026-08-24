@@ -5,9 +5,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
+import { SearchBar } from "@/components/layout/search-bar";
 
 const NAV_LINKS = [
-  { href: "/", label: "Accueil" },
   { href: "/catalogue", label: "Catalogue" },
   { href: "/lecture", label: "Lecture" },
   { href: "/a-propos", label: "L'Association" },
@@ -56,7 +56,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -67,6 +67,10 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+
+        <div className="hidden md:block md:w-48 lg:w-56">
+          <SearchBar />
+        </div>
 
         <div className="flex items-center gap-4">
           <Link
@@ -82,7 +86,7 @@ export function SiteHeader() {
           </Link>
           <button
             type="button"
-            className="flex flex-col gap-1.5 md:hidden"
+            className="flex flex-col gap-1.5 lg:hidden"
             aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
@@ -95,7 +99,10 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav className="flex flex-col gap-1 border-t border-paper/10 px-4 pb-4 md:hidden">
+        <nav className="flex flex-col gap-1 border-t border-paper/10 px-4 pb-4 lg:hidden">
+          <div className="py-3 md:hidden">
+            <SearchBar />
+          </div>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

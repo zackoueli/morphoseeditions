@@ -116,6 +116,17 @@ export function SiteFooter() {
           <p className="text-xs text-paper/30">
             © {new Date().getFullYear()} Morphose Éditions — Tous droits réservés
           </p>
+          <p className="text-xs text-paper/30">
+            Site développé par{" "}
+            <Link
+              href="https://breizhapp.tech"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="text-paper/50 hover:text-saffron"
+            >
+              BreizhApp
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

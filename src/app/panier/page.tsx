@@ -27,12 +27,20 @@ export default function CartPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error ?? "checkout_failed");
+      if (!res.ok || !data.url) {
+        if (data.error === "insufficient_stock") {
+          setError("Stock insuffisant pour un des articles du panier.");
+        } else if (data.error === "issue_unavailable" || data.error === "issue_not_found") {
+          setError("Une revue de votre panier n'est plus disponible.");
+        } else {
+          setError("Impossible de lancer le paiement pour le moment. Réessayez dans un instant.");
+        }
+        setLoading(false);
+        return;
+      }
       window.location.href = data.url;
     } catch {
-      setError(
-        "Impossible de lancer le paiement. Vérifiez le stock disponible ou réessayez."
-      );
+      setError("Impossible de lancer le paiement pour le moment. Réessayez dans un instant.");
       setLoading(false);
     }
   }
