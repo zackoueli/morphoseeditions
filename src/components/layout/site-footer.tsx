@@ -10,7 +10,7 @@ const NAV_LINKS = [
 ];
 
 const SOCIAL_LINKS = [
-  { href: "https://instagram.com", label: "Instagram" },
+  { href: "https://www.instagram.com/morphoseeditions", label: "Instagram" },
   { href: "https://facebook.com", label: "Facebook" },
 ];
 
@@ -40,7 +40,7 @@ function FacebookIcon() {
 export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden">
-      <div className="torn-edge relative bg-saffron pb-6 pt-14 text-ink">
+      <div className="paint-edge relative bg-saffron pb-6 pt-14 text-ink">
         <p className="text-center font-display text-4xl tracking-wide sm:text-5xl">
           SOUTENEZ-NOUS
         </p>
@@ -67,7 +67,7 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="torn-edge relative bg-ink pb-4" />
+      <div className="paint-edge relative bg-ink pb-4" />
 
       <div className="relative bg-ink pb-16 pt-10 text-paper">
         <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 text-center sm:px-6">
@@ -94,7 +94,7 @@ export function SiteFooter() {
           </nav>
 
           <div className="flex gap-6 text-paper/70">
-            <Link href="https://instagram.com" target="_blank" rel="noreferrer noopener" className="hover:text-paper">
+            <Link href="https://www.instagram.com/morphoseeditions" target="_blank" rel="noreferrer noopener" className="hover:text-paper">
               <InstagramIcon />
             </Link>
             <Link href="https://facebook.com" target="_blank" rel="noreferrer noopener" className="hover:text-paper">
