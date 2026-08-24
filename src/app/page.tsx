@@ -1,69 +1,114 @@
+import Link from "next/link";
 import Image from "next/image";
+import { getPublishedIssues } from "@/lib/data/issues";
+import { IssueCard } from "@/components/catalogue/issue-card";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const issues = await getPublishedIssues();
+  const latest = issues.slice(0, 3);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <>
+      <section className="relative -mt-[73px] overflow-hidden border-b-2 border-paper/10 bg-ink">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url(/pexels-introspectivedsgn-7524996.jpg)" }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+        <div className="absolute inset-0 bg-ink/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-ink/50" />
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-24 pt-40 text-center sm:px-6 md:pb-36 md:pt-48">
+          <p className="font-marker text-3xl text-saffron">
+            Édition associative &amp; lecture libre
           </p>
+          <h1 className="font-display text-6xl leading-[0.95] tracking-wide text-paper drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] sm:text-8xl">
+            DES REVUES
+            <br />
+            <span className="text-red">QUI SE PARTAGENT.</span>
+          </h1>
+          <p className="max-w-xl text-lg text-paper/80 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+            Morphose Éditions publie chaque année une revue collective de
+            bandes dessinées et de poésie. Toutes nos publications se
+            feuillettent gratuitement en ligne — et se soutiennent en papier.
+          </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-4">
+            <Link
+              href="/catalogue"
+              className="rounded-full bg-red px-8 py-4 font-display text-lg tracking-wide text-paper transition hover:bg-red-dark"
+            >
+              VOIR LE CATALOGUE
+            </Link>
+            <Link
+              href="/soutenir"
+              className="rounded-full border-2 border-paper/50 px-8 py-4 font-display text-lg tracking-wide text-paper transition hover:border-saffron hover:text-saffron"
+            >
+              SOUTENIR L&apos;ASSO
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+        <div className="torn-edge relative h-4 bg-ink" />
+      </section>
+
+      <section className="bg-paper text-ink">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+          <div className="mb-10 flex items-end justify-between">
+            <h2 className="font-display text-4xl tracking-wide">
+              DERNIÈRES SORTIES
+            </h2>
+            <Link
+              href="/catalogue"
+              className="font-display text-sm tracking-widest text-red hover:underline"
+            >
+              TOUT LE CATALOGUE →
+            </Link>
+          </div>
+
+          {latest.length === 0 ? (
+            <p className="text-ink/60">
+              Le catalogue est en cours de préparation — revenez bientôt.
+            </p>
+          ) : (
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {latest.map((issue) => (
+                <IssueCard key={issue.id} issue={issue} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="border-t-2 border-paper/10 bg-ink">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:items-center">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-lg border-2 border-paper/10">
             <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+              src="/images/about-placeholder.svg"
+              alt="Membres de l'association en atelier"
+              fill
+              className="object-cover"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+          <div>
+            <p className="font-marker text-2xl text-saffron">L&apos;association</p>
+            <h2 className="mt-2 font-display text-4xl tracking-wide text-paper">
+              UN COLLECTIF, PAS UNE MAISON D&apos;ÉDITION COMME LES AUTRES
+            </h2>
+            <p className="mt-4 text-paper/70">
+              Morphose Éditions est une association loi 1901 portée par des
+              auteur·rice·s, illustrateur·rice·s et poètes. Chaque revue est
+              une œuvre collective, imprimée en petite série et diffusée sans
+              barrière numérique : nos PDF sont en accès libre pour tout le
+              monde, dès leur sortie.
+            </p>
+            <Link
+              href="/a-propos"
+              className="mt-6 inline-block font-display text-sm tracking-widest text-red hover:underline"
+            >
+              DÉCOUVRIR L&apos;ASSOCIATION →
+            </Link>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }
