@@ -71,18 +71,22 @@ export async function POST(req: Request) {
       }
 
       const shipping = session.collected_information?.shipping_details;
+      const shippingAddress: Order["shippingAddress"] = {
+        name: shipping?.name ?? session.customer_details?.name ?? "",
+        line1: shipping?.address?.line1 ?? "",
+        postalCode: shipping?.address?.postal_code ?? "",
+        city: shipping?.address?.city ?? "",
+        country: shipping?.address?.country ?? "",
+      };
+      if (shipping?.address?.line2) {
+        shippingAddress.line2 = shipping.address.line2;
+      }
+
       const order: Omit<Order, "id"> = {
         items: orderItems,
         amountTotalCents: session.amount_total ?? 0,
         shippingCents: 0,
-        shippingAddress: {
-          name: shipping?.name ?? session.customer_details?.name ?? "",
-          line1: shipping?.address?.line1 ?? "",
-          line2: shipping?.address?.line2 ?? undefined,
-          postalCode: shipping?.address?.postal_code ?? "",
-          city: shipping?.address?.city ?? "",
-          country: shipping?.address?.country ?? "",
-        },
+        shippingAddress,
         customerEmail: session.customer_details?.email ?? "",
         status: "paid",
         stripeSessionId: session.id,
