@@ -12,10 +12,13 @@ type IssueFormValues = {
   title: string;
   issueNumber: number;
   description: string;
+  description2: string;
   priceCents: number;
   stock: number;
   published: boolean;
   coverImageUrl: string;
+  backgroundImageUrl: string;
+  buttonColor: string;
   pageImageUrls: string[];
 };
 
@@ -41,13 +44,17 @@ export function IssueForm({
     title: issue?.title ?? "",
     issueNumber: issue?.issueNumber ?? 1,
     description: issue?.description ?? "",
+    description2: issue?.description2 ?? "",
     priceCents: issue?.priceCents ?? 1500,
     stock: issue?.stock ?? 0,
     published: issue?.published ?? false,
     coverImageUrl: issue?.coverImageUrl ?? "",
+    backgroundImageUrl: issue?.backgroundImageUrl ?? "",
+    buttonColor: issue?.buttonColor ?? "#dc2626",
     pageImageUrls: issue?.pageImageUrls ?? [],
   });
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [progress, setProgress] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +67,7 @@ export function IssueForm({
 
     try {
       let coverImageUrl = values.coverImageUrl;
+      let backgroundImageUrl = values.backgroundImageUrl;
       let pageImageUrls = values.pageImageUrls;
       const workingId = issueId ?? crypto.randomUUID();
 
@@ -93,11 +101,21 @@ export function IssueForm({
         throw new Error("Une image de couverture est requise.");
       }
 
+      if (backgroundFile) {
+        setProgress("Envoi du fond...");
+        const { uploadFile } = await import("@/lib/storage-upload");
+        backgroundImageUrl = await uploadFile(
+          `issues/${workingId}/background.jpg`,
+          backgroundFile
+        );
+      }
+
       setProgress("Enregistrement...");
       const payload = {
         ...values,
         slug: values.slug || slugify(values.title),
         coverImageUrl,
+        backgroundImageUrl,
         pageImageUrls,
       };
 
@@ -165,13 +183,25 @@ export function IssueForm({
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-sm text-ink/60">Description</span>
+        <span className="text-sm text-ink/60">Description 1</span>
         <textarea
           required
           rows={4}
           value={values.description}
           onChange={(e) =>
             setValues((v) => ({ ...v, description: e.target.value }))
+          }
+          className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-ink/60">Description 2</span>
+        <textarea
+          rows={3}
+          value={values.description2}
+          onChange={(e) =>
+            setValues((v) => ({ ...v, description2: e.target.value }))
           }
           className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
         />
@@ -226,6 +256,35 @@ export function IssueForm({
           accept="image/*"
           onChange={(e) => setCoverFile(e.target.files?.[0] ?? null)}
         />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-ink/60">
+          Fond (image d&apos;arrière-plan de la carte){" "}
+          {values.backgroundImageUrl && "— déjà envoyé"}
+        </span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setBackgroundFile(e.target.files?.[0] ?? null)}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-ink/60">Couleur du bouton</span>
+        <div className="flex items-center gap-3">
+          <input
+            type="color"
+            value={values.buttonColor}
+            onChange={(e) =>
+              setValues((v) => ({ ...v, buttonColor: e.target.value }))
+            }
+            className="h-10 w-16 cursor-pointer rounded-md border-2 border-ink/15"
+          />
+          <span className="font-mono text-sm text-ink/60">
+            {values.buttonColor}
+          </span>
+        </div>
       </label>
 
       <label className="flex flex-col gap-1">

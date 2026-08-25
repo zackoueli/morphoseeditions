@@ -4,7 +4,10 @@ export type Issue = {
   title: string;
   issueNumber: number;
   description: string;
+  description2: string;
   coverImageUrl: string;
+  backgroundImageUrl: string;
+  buttonColor: string;
   pageImageUrls: string[];
   priceCents: number;
   stock: number;

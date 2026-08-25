@@ -111,7 +111,7 @@ export default async function HomePage() {
               Le catalogue est en cours de préparation — revenez bientôt.
             </p>
           ) : (
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 lg:grid-cols-2">
               {latest.map((issue) => (
                 <IssueCard key={issue.id} issue={issue} />
               ))}

@@ -27,7 +27,7 @@ export default async function CataloguePage() {
             Le catalogue est en cours de préparation.
           </p>
         ) : (
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-8 lg:grid-cols-2">
             {issues.map((issue) => (
               <IssueCard key={issue.id} issue={issue} />
             ))}
