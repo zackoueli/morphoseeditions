@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPublishedIssues } from "@/lib/data/issues";
 import { IssueCard } from "@/components/catalogue/issue-card";
+import { JoinAssociationForm } from "@/components/association/join-form";
 
 export const dynamic = "force-dynamic";
 
@@ -150,6 +151,34 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
+      </section>
+
+      <section className="relative overflow-hidden border-t-2 border-paper/10 bg-ink">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url(/images/hero-background.jpg)" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/85 to-ink/70" />
+
+        <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
+          <span className="inline-block rounded-full border border-saffron/50 bg-ink/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-saffron backdrop-blur-sm">
+            L&apos;association recrute
+          </span>
+          <h2 className="mt-4 font-display text-4xl leading-[0.95] tracking-wide text-paper drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] sm:text-5xl">
+            REJOIGNEZ <span className="text-red">MORPHOSE ÉDITIONS</span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-sm text-paper/75 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+            Illustration, écriture, mise en page, diffusion, événementiel...
+            dites-nous ce que vous pouvez apporter au collectif, on vous
+            recontacte.
+          </p>
+
+          <div className="mx-auto mt-10 max-w-xl text-left">
+            <JoinAssociationForm />
+          </div>
+        </div>
+
+        <div className="torn-edge relative h-4 bg-ink" />
       </section>
     </>
   );

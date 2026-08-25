@@ -69,14 +69,14 @@ export function SiteFooter() {
 
       <div className="paint-edge relative bg-ink pb-4" />
 
-      <div className="relative bg-ink pb-16 pt-10 text-paper">
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 text-center sm:px-6">
-          <Link href="/" className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-red">
+      <div className="relative bg-ink pb-8 pt-8 text-paper">
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-5 px-4 text-center sm:px-6">
+          <Link href="/" className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-red">
             <Image
               src="/logo.jpeg"
               alt="Morphose Éditions"
               fill
-              sizes="80px"
+              sizes="56px"
               className="object-cover"
             />
           </Link>
@@ -102,20 +102,18 @@ export function SiteFooter() {
             </Link>
           </div>
 
-          <p className="max-w-sm text-sm text-paper/50">
-            Association loi 1901. Revues annuelles de bandes dessinées et de
-            poésie, en lecture libre, imprimées avec soin.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-paper/40">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/40">
             <Link href="/mentions-legales" className="hover:text-paper/70">Mentions légales</Link>
             <Link href="/cgv" className="hover:text-paper/70">CGV</Link>
             <Link href="/confidentialite" className="hover:text-paper/70">Confidentialité</Link>
+            <span className="text-paper/30">
+              <Link href="/admin" className="hover:text-paper/50" aria-label="Espace administrateur">
+                ©
+              </Link>{" "}
+              {new Date().getFullYear()} Morphose Éditions — Tous droits réservés
+            </span>
           </div>
 
-          <p className="text-xs text-paper/30">
-            © {new Date().getFullYear()} Morphose Éditions — Tous droits réservés
-          </p>
           <p className="text-xs text-paper/30">
             Site développé par{" "}
             <Link
