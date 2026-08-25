@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { SearchBar } from "@/components/layout/search-bar";
+import { pickRandomHeaderTheme, type HeaderTheme } from "@/components/layout/header-themes";
 
 const NAV_LINKS = [
   { href: "/catalogue", label: "Catalogue" },
@@ -18,9 +19,14 @@ export function SiteHeader() {
   const { totalItems } = useCart();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [theme, setTheme] = useState<HeaderTheme | null>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
   const transparent = isHome && !scrolled && !open;
+
+  useEffect(() => {
+    setTheme(pickRandomHeaderTheme());
+  }, []);
 
   useEffect(() => {
     function onScroll() {
@@ -33,27 +39,47 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b-2 transition-colors duration-300 ${
+      className={`sticky top-0 z-50 border-b-2 bg-cover bg-repeat-x bg-left-top transition-colors duration-300 ${
         transparent
           ? "border-transparent bg-transparent"
           : "border-paper/10 bg-ink/95 backdrop-blur"
       }`}
+      style={
+        theme && !transparent
+          ? { backgroundImage: `linear-gradient(rgba(13,9,6,0.7), rgba(13,9,6,0.7)), url(${theme.bgSrc})` }
+          : undefined
+      }
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
-          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-red">
-            <Image
-              src="/logo.jpeg"
-              alt="Morphose Éditions"
-              fill
-              sizes="44px"
-              className="object-cover"
-              priority
-            />
-          </span>
-          <span className="font-display text-2xl tracking-wide text-paper">
-            MORPHOSE
-          </span>
+          {theme ? (
+            <span className="relative h-10 w-auto shrink-0">
+              <Image
+                src={theme.logoSrc}
+                alt={theme.logoAlt}
+                width={220}
+                height={56}
+                className="h-10 w-auto object-contain"
+                priority
+              />
+            </span>
+          ) : (
+            <>
+              <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-red">
+                <Image
+                  src="/logo.jpeg"
+                  alt="Morphose Éditions"
+                  fill
+                  sizes="44px"
+                  className="object-cover"
+                  priority
+                />
+              </span>
+              <span className="font-display text-2xl tracking-wide text-paper">
+                MORPHOSE
+              </span>
+            </>
+          )}
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">

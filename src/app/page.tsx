@@ -15,8 +15,8 @@ export default async function HomePage() {
     <>
       <section className="relative -mt-[73px] overflow-hidden border-b-2 border-paper/10 bg-ink">
         <div
-          className="absolute inset-0 bg-cover bg-[center_20%]"
-          style={{ backgroundImage: "url(/images/hero-background.png)" }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url(/images/hero-background.jpg)" }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-l from-ink/55 via-transparent to-transparent" />
