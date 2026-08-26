@@ -40,6 +40,7 @@ export type Author = {
   email: string;
   website: string;
   instagram: string;
+  facebook: string;
   published: boolean;
   createdAt: number;
   updatedAt: number;

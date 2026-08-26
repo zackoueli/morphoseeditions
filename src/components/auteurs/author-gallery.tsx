@@ -10,13 +10,49 @@ function instagramHref(value: string) {
   return `https://instagram.com/${handle}`;
 }
 
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden>
+      <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden>
+      <path
+        d="M14 9h2.5V6H14c-1.9 0-3.5 1.6-3.5 3.5V11H8.5v3H10.5v6h3v-6h2.3l.7-3H13.5v-1.3c0-.4.3-.7.5-.7Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function WebIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9Z" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
 export function AuthorGallery({ authors }: { authors: Author[] }) {
   const [selected, setSelected] = useState<Author | null>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!selected) return;
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setSelected(null);
+      if (e.key === "Escape") {
+        if (lightboxUrl) setLightboxUrl(null);
+        else setSelected(null);
+      }
     }
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
@@ -24,7 +60,7 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [selected]);
+  }, [selected, lightboxUrl]);
 
   return (
     <>
@@ -66,7 +102,7 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
           onClick={() => setSelected(null)}
         >
           <div
-            className="relative flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border-2 border-paper/10 bg-ink"
+            className="torn-frame relative flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden bg-ink"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -105,24 +141,24 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
                 </p>
               )}
 
-              {(selected.email || selected.website || selected.instagram) && (
-                <div className="flex flex-wrap gap-3">
-                  {selected.email && (
-                    <a
-                      href={`mailto:${selected.email}`}
-                      className="rounded-full border border-paper/30 px-4 py-2 font-display text-xs tracking-widest text-paper transition hover:border-saffron hover:text-saffron"
-                    >
-                      E-MAIL
-                    </a>
-                  )}
+              {selected.email && (
+                <p className="text-sm text-paper/70">
+                  <span className="text-paper/40">E-mail : </span>
+                  {selected.email}
+                </p>
+              )}
+
+              {(selected.website || selected.instagram || selected.facebook) && (
+                <div className="flex flex-wrap gap-3 text-paper/70">
                   {selected.website && (
                     <a
                       href={selected.website}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="rounded-full border border-paper/30 px-4 py-2 font-display text-xs tracking-widest text-paper transition hover:border-saffron hover:text-saffron"
+                      aria-label="Site web"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 transition hover:border-saffron hover:text-saffron"
                     >
-                      SITE WEB
+                      <WebIcon />
                     </a>
                   )}
                   {selected.instagram && (
@@ -130,9 +166,21 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
                       href={instagramHref(selected.instagram)}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="rounded-full border border-paper/30 px-4 py-2 font-display text-xs tracking-widest text-paper transition hover:border-saffron hover:text-saffron"
+                      aria-label="Instagram"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 transition hover:border-saffron hover:text-saffron"
                     >
-                      INSTAGRAM
+                      <InstagramIcon />
+                    </a>
+                  )}
+                  {selected.facebook && (
+                    <a
+                      href={selected.facebook}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label="Facebook"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 transition hover:border-saffron hover:text-saffron"
+                    >
+                      <FacebookIcon />
                     </a>
                   )}
                 </div>
@@ -141,9 +189,11 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
               {selected.portfolioImageUrls.length > 0 && (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {selected.portfolioImageUrls.map((url) => (
-                    <div
+                    <button
                       key={url}
-                      className="relative aspect-square overflow-hidden rounded-md border border-paper/10"
+                      type="button"
+                      onClick={() => setLightboxUrl(url)}
+                      className="relative aspect-square overflow-hidden rounded-md border border-paper/10 transition hover:opacity-80"
                     >
                       <Image
                         src={url}
@@ -152,11 +202,36 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
                         sizes="200px"
                         className="object-cover"
                       />
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {lightboxUrl && (
+        <div
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-ink/95 p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxUrl(null)}
+            aria-label="Fermer"
+            className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-paper/40 bg-ink/40 text-paper backdrop-blur-sm transition hover:border-saffron hover:text-saffron"
+          >
+            ✕
+          </button>
+          <div className="relative h-full max-h-[85vh] w-full max-w-4xl">
+            <Image
+              src={lightboxUrl}
+              alt=""
+              fill
+              sizes="90vw"
+              className="object-contain"
+            />
           </div>
         </div>
       )}

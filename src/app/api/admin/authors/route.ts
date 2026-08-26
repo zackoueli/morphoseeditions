@@ -13,6 +13,7 @@ const AuthorInputSchema = z.object({
   email: z.string().email().or(z.literal("")).default(""),
   website: z.string().url().or(z.literal("")).default(""),
   instagram: z.string().default(""),
+  facebook: z.string().default(""),
   published: z.boolean(),
 });
 

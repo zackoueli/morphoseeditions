@@ -30,6 +30,7 @@ export function AuthorForm({
   const [email, setEmail] = useState(author?.email ?? "");
   const [website, setWebsite] = useState(author?.website ?? "");
   const [instagram, setInstagram] = useState(author?.instagram ?? "");
+  const [facebook, setFacebook] = useState(author?.facebook ?? "");
   const [published, setPublished] = useState(author?.published ?? false);
   const [photoUrl, setPhotoUrl] = useState(author?.photoUrl ?? "");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -78,6 +79,7 @@ export function AuthorForm({
         email,
         website,
         instagram,
+        facebook,
         published,
       };
 
@@ -168,14 +170,26 @@ export function AuthorForm({
         </label>
       </div>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-sm text-ink/60">Instagram (@pseudo ou lien)</span>
-        <input
-          value={instagram}
-          onChange={(e) => setInstagram(e.target.value)}
-          className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
-        />
-      </label>
+      <div className="grid grid-cols-2 gap-4">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm text-ink/60">Instagram (@pseudo ou lien)</span>
+          <input
+            value={instagram}
+            onChange={(e) => setInstagram(e.target.value)}
+            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm text-ink/60">Facebook (lien)</span>
+          <input
+            type="url"
+            placeholder="https://facebook.com/..."
+            value={facebook}
+            onChange={(e) => setFacebook(e.target.value)}
+            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+          />
+        </label>
+      </div>
 
       <label className="flex flex-col gap-1">
         <span className="text-sm text-ink/60">
