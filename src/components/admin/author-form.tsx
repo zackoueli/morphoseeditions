@@ -27,11 +27,22 @@ export function AuthorForm({
   const [name, setName] = useState(author?.name ?? "");
   const [role, setRole] = useState(author?.role ?? "");
   const [bio, setBio] = useState(author?.bio ?? "");
+  const [email, setEmail] = useState(author?.email ?? "");
+  const [website, setWebsite] = useState(author?.website ?? "");
+  const [instagram, setInstagram] = useState(author?.instagram ?? "");
   const [published, setPublished] = useState(author?.published ?? false);
   const [photoUrl, setPhotoUrl] = useState(author?.photoUrl ?? "");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [portfolioUrls, setPortfolioUrls] = useState<string[]>(
+    author?.portfolioImageUrls ?? []
+  );
+  const [portfolioFiles, setPortfolioFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function removePortfolioUrl(url: string) {
+    setPortfolioUrls((urls) => urls.filter((u) => u !== url));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,12 +59,25 @@ export function AuthorForm({
         throw new Error("Une photo est requise.");
       }
 
+      const uploadedPortfolioUrls: string[] = [];
+      for (let i = 0; i < portfolioFiles.length; i++) {
+        const url = await uploadFile(
+          `authors/${workingId}/portfolio/${Date.now()}-${i}.jpg`,
+          portfolioFiles[i]
+        );
+        uploadedPortfolioUrls.push(url);
+      }
+
       const payload = {
         slug: slug || slugify(name),
         name,
         role,
         bio,
         photoUrl: finalPhotoUrl,
+        portfolioImageUrls: [...portfolioUrls, ...uploadedPortfolioUrls],
+        email,
+        website,
+        instagram,
         published,
       };
 
@@ -122,6 +146,37 @@ export function AuthorForm({
         />
       </label>
 
+      <div className="grid grid-cols-2 gap-4">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm text-ink/60">E-mail</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm text-ink/60">Site web</span>
+          <input
+            type="url"
+            placeholder="https://..."
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+          />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-ink/60">Instagram (@pseudo ou lien)</span>
+        <input
+          value={instagram}
+          onChange={(e) => setInstagram(e.target.value)}
+          className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+        />
+      </label>
+
       <label className="flex flex-col gap-1">
         <span className="text-sm text-ink/60">
           Photo {photoUrl && "— déjà envoyée"}
@@ -132,6 +187,42 @@ export function AuthorForm({
           onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
         />
       </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-ink/60">
+          Portfolio (plusieurs images d&apos;œuvres)
+        </span>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => setPortfolioFiles(Array.from(e.target.files ?? []))}
+        />
+        {portfolioFiles.length > 0 && (
+          <span className="text-xs text-ink/40">
+            {portfolioFiles.length} nouvelle(s) image(s) à envoyer
+          </span>
+        )}
+      </label>
+
+      {portfolioUrls.length > 0 && (
+        <div className="grid grid-cols-4 gap-2">
+          {portfolioUrls.map((url) => (
+            <div key={url} className="group relative aspect-square overflow-hidden rounded-md border-2 border-ink/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="" className="h-full w-full object-cover" />
+              <button
+                type="button"
+                onClick={() => removePortfolioUrl(url)}
+                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/80 text-xs text-paper opacity-0 transition group-hover:opacity-100"
+                aria-label="Retirer cette image"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <label className="flex items-center gap-2">
         <input

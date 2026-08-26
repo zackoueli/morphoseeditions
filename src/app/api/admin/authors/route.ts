@@ -9,6 +9,10 @@ const AuthorInputSchema = z.object({
   role: z.string().default(""),
   bio: z.string().default(""),
   photoUrl: z.string().url(),
+  portfolioImageUrls: z.array(z.string().url()).default([]),
+  email: z.string().email().or(z.literal("")).default(""),
+  website: z.string().url().or(z.literal("")).default(""),
+  instagram: z.string().default(""),
   published: z.boolean(),
 });
 

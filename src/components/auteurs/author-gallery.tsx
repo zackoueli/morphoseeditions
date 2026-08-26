@@ -4,6 +4,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { Author } from "@/lib/types";
 
+function instagramHref(value: string) {
+  if (value.startsWith("http")) return value;
+  const handle = value.replace(/^@/, "");
+  return `https://instagram.com/${handle}`;
+}
+
 export function AuthorGallery({ authors }: { authors: Author[] }) {
   const [selected, setSelected] = useState<Author | null>(null);
 
@@ -60,16 +66,9 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
           onClick={() => setSelected(null)}
         >
           <div
-            className="relative w-full max-w-2xl overflow-hidden rounded-lg border-2 border-paper/10"
+            className="relative flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border-2 border-paper/10 bg-ink"
             onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${selected.photoUrl})` }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/80 to-ink/40" />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink/60 via-transparent to-transparent" />
-
             <button
               type="button"
               onClick={() => setSelected(null)}
@@ -79,19 +78,83 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
               ✕
             </button>
 
-            <div className="relative flex min-h-[420px] flex-col justify-end p-8 sm:p-10">
-              {selected.role && (
-                <span className="inline-block w-fit rounded-full border border-saffron/50 bg-ink/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-saffron backdrop-blur-sm">
-                  {selected.role}
-                </span>
-              )}
-              <h2 className="mt-4 font-display text-4xl leading-[0.95] tracking-wide text-paper drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] sm:text-5xl">
-                {selected.name}
-              </h2>
+            <div className="relative flex min-h-[280px] shrink-0 flex-col justify-end p-8 sm:p-10">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${selected.photoUrl})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/30" />
+              <div className="absolute inset-0 bg-gradient-to-r from-ink/60 via-transparent to-transparent" />
+
+              <div className="relative">
+                {selected.role && (
+                  <span className="inline-block w-fit rounded-full border border-saffron/50 bg-ink/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-saffron backdrop-blur-sm">
+                    {selected.role}
+                  </span>
+                )}
+                <h2 className="mt-4 font-display text-4xl leading-[0.95] tracking-wide text-paper drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] sm:text-5xl">
+                  {selected.name}
+                </h2>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-6 overflow-y-auto p-8 sm:p-10">
               {selected.bio && (
-                <p className="mt-5 max-w-xl whitespace-pre-line text-sm text-paper/80 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] sm:text-base">
+                <p className="max-w-xl whitespace-pre-line text-sm text-paper/80 sm:text-base">
                   {selected.bio}
                 </p>
+              )}
+
+              {(selected.email || selected.website || selected.instagram) && (
+                <div className="flex flex-wrap gap-3">
+                  {selected.email && (
+                    <a
+                      href={`mailto:${selected.email}`}
+                      className="rounded-full border border-paper/30 px-4 py-2 font-display text-xs tracking-widest text-paper transition hover:border-saffron hover:text-saffron"
+                    >
+                      E-MAIL
+                    </a>
+                  )}
+                  {selected.website && (
+                    <a
+                      href={selected.website}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="rounded-full border border-paper/30 px-4 py-2 font-display text-xs tracking-widest text-paper transition hover:border-saffron hover:text-saffron"
+                    >
+                      SITE WEB
+                    </a>
+                  )}
+                  {selected.instagram && (
+                    <a
+                      href={instagramHref(selected.instagram)}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="rounded-full border border-paper/30 px-4 py-2 font-display text-xs tracking-widest text-paper transition hover:border-saffron hover:text-saffron"
+                    >
+                      INSTAGRAM
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {selected.portfolioImageUrls.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {selected.portfolioImageUrls.map((url) => (
+                    <div
+                      key={url}
+                      className="relative aspect-square overflow-hidden rounded-md border border-paper/10"
+                    >
+                      <Image
+                        src={url}
+                        alt={`Œuvre de ${selected.name}`}
+                        fill
+                        sizes="200px"
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>

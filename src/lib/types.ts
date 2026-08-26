@@ -36,6 +36,10 @@ export type Author = {
   role: string;
   bio: string;
   photoUrl: string;
+  portfolioImageUrls: string[];
+  email: string;
+  website: string;
+  instagram: string;
   published: boolean;
   createdAt: number;
   updatedAt: number;
