@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getIssueBySlug } from "@/lib/data/issues";
-import { FlipbookViewer } from "@/components/catalogue/flipbook-viewer";
 import { AddToCartButton } from "@/components/catalogue/add-to-cart-button";
 import { formatPrice } from "@/lib/format";
 
@@ -40,30 +40,30 @@ export default async function IssuePage({
               </span>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <AddToCartButton issue={issue} />
+              <Link
+                href={`/lecture/${issue.slug}`}
+                className="rounded-full border-2 border-ink px-8 py-4 font-display text-lg tracking-wide text-ink transition hover:border-red hover:text-red"
+              >
+                LIRE
+              </Link>
             </div>
 
             <p className="mt-4 text-xs text-ink/40">
-              Le PDF de cette revue est en lecture libre et gratuite
-              ci-contre. L&apos;achat finance l&apos;impression papier et
-              soutient l&apos;association.
+              Cette revue se feuillette gratuitement en ligne. L&apos;achat
+              finance l&apos;impression papier et soutient l&apos;association.
             </p>
           </div>
 
-          <div>
-            <FlipbookViewer
-              pageImageUrls={issue.pageImageUrls}
-              title={issue.title}
+          <div className="relative mx-auto aspect-[3/4] w-full max-w-sm overflow-hidden rounded-lg border-2 border-ink/10 bg-ink/5">
+            <Image
+              src={issue.coverImageUrl}
+              alt={`Couverture de ${issue.title}`}
+              fill
+              sizes="(min-width: 1024px) 40vw, 80vw"
+              className="object-cover"
             />
-            <div className="mt-4 text-center">
-              <Link
-                href={`/lecture/${issue.slug}`}
-                className="font-display text-sm tracking-widest text-red hover:underline"
-              >
-                OUVRIR EN PLEIN ÉCRAN →
-              </Link>
-            </div>
           </div>
         </div>
       </div>
