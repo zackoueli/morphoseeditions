@@ -28,6 +28,15 @@ export default function AdminDashboardPage() {
           </p>
         </Link>
         <Link
+          href="/admin/auteurs"
+          className="rounded-lg border-2 border-ink/10 p-6 hover:border-red"
+        >
+          <h2 className="font-display text-xl">Auteurs</h2>
+          <p className="mt-1 text-sm text-ink/60">
+            Ajouter les auteurs·rices du collectif et leur fiche.
+          </p>
+        </Link>
+        <Link
           href="/admin/a-propos"
           className="rounded-lg border-2 border-ink/10 p-6 hover:border-red"
         >

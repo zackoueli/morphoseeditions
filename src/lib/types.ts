@@ -29,6 +29,18 @@ export type NewsPost = {
   updatedAt: number;
 };
 
+export type Author = {
+  id: string;
+  slug: string;
+  name: string;
+  role: string;
+  bio: string;
+  photoUrl: string;
+  published: boolean;
+  createdAt: number;
+  updatedAt: number;
+};
+
 export type AboutPage = {
   content: string;
   updatedAt: number;

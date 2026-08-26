@@ -11,6 +11,7 @@ import { pickRandomHeaderTheme, type HeaderTheme } from "@/components/layout/hea
 const NAV_LINKS = [
   { href: "/catalogue", label: "Catalogue" },
   { href: "/lecture", label: "Lecture" },
+  { href: "/auteurs", label: "Nos auteurs" },
   { href: "/a-propos", label: "L'Association" },
   { href: "/libraires", label: "Libraires" },
 ];
