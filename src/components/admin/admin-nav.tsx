@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/admin", label: "Tableau de bord" },
   { href: "/admin/revues", label: "Revues" },
   { href: "/admin/actu", label: "Actualités" },
+  { href: "/admin/auteurs", label: "Auteurs" },
   { href: "/admin/a-propos", label: "À propos" },
   { href: "/admin/libraires", label: "Libraires" },
   { href: "/admin/commandes", label: "Commandes" },
