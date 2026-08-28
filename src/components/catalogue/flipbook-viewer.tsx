@@ -45,6 +45,15 @@ export function FlipbookViewer({
   const loadedUrls = useRef<Set<string>>(new Set());
   const pageBeforeRemount = useRef(0);
   const ready = readyCount >= Math.min(INITIAL_READY_COUNT, pageImageUrls.length);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    setIsMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     setPageInput(String(currentPage + 1));
@@ -130,6 +139,7 @@ export function FlipbookViewer({
 
   const widthPx = fullscreen ? Math.round((BASE_WIDTH_PX * zoom) / 100) : 550;
   const heightPx = Math.round(widthPx * PAGE_ASPECT);
+  const containerWidthPx = fullscreen && !isMobile ? widthPx * 2 : widthPx;
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -180,7 +190,7 @@ export function FlipbookViewer({
 
       <div
         ref={bookContainerRef}
-        style={fullscreen ? { width: widthPx * 2, maxWidth: "100%" } : undefined}
+        style={fullscreen ? { width: containerWidthPx, maxWidth: "100%" } : undefined}
         className={`relative ${fullscreen ? "" : "w-full max-w-2xl"}`}
       >
         {fullscreen && magnifierOn && (
@@ -188,12 +198,12 @@ export function FlipbookViewer({
         )}
         {/* @ts-expect-error react-pageflip a des types incomplets pour ses props */}
         <HTMLFlipBook
-          key={fullscreen ? widthPx : "fixed"}
+          key={fullscreen ? `${widthPx}-${isMobile}` : "fixed"}
           ref={bookRef}
           width={widthPx}
           height={heightPx}
           size={fullscreen ? "fixed" : "stretch"}
-          usePortrait={false}
+          usePortrait
           minWidth={280}
           maxWidth={fullscreen ? 2000 : 900}
           minHeight={373}
