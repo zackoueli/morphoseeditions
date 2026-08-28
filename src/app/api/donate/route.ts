@@ -18,6 +18,9 @@ export async function POST(req: Request) {
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    // Cohérence avec /api/checkout : Managed Payments est activé par défaut
+    // sur le compte de prod et fait échouer la création de session.
+    managed_payments: { enabled: false },
     line_items: [
       {
         price_data: {
