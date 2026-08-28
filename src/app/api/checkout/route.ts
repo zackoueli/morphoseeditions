@@ -71,6 +71,9 @@ export async function POST(req: Request) {
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    // Managed Payments est activé par défaut sur le compte et interdit
+    // shipping_address_collection ; on le désactive pour cette requête.
+    managed_payments: { enabled: false },
     line_items: [
       ...lineItems,
       {
