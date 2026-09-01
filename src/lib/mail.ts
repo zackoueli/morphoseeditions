@@ -25,6 +25,8 @@ type SendMailInput = {
   body?: { label: string; value: string };
   /** Adresse de réponse (la personne qui a rempli le formulaire). */
   replyTo?: { email: string; name?: string };
+  /** Destinataire ; par défaut CONTACT_TO_EMAIL (boîte de l'association). */
+  to?: string;
 };
 
 function escapeHtml(value: string) {
@@ -126,6 +128,7 @@ export async function sendMail({
   fields,
   body,
   replyTo,
+  to,
 }: SendMailInput): Promise<boolean> {
   const apiKey = process.env.BREVO_API_KEY;
   const senderEmail = process.env.BREVO_SENDER_EMAIL;
@@ -150,7 +153,7 @@ export async function sendMail({
           email: senderEmail,
           name: process.env.BREVO_SENDER_NAME ?? "Site Morphose Éditions",
         },
-        to: [{ email: TO_EMAIL }],
+        to: [{ email: to || TO_EMAIL }],
         replyTo: replyTo?.email
           ? { email: replyTo.email, name: replyTo.name }
           : undefined,

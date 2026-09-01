@@ -1,8 +1,71 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { adminDb } from "@/lib/firebase/admin";
+import { sendMail } from "@/lib/mail";
+import { formatPrice } from "@/lib/format";
 import type Stripe from "stripe";
 import type { Order, OrderItem } from "@/lib/types";
+
+function itemLines(items: OrderItem[]) {
+  return items
+    .map(
+      (i) =>
+        `${i.quantity}× ${i.title} — ${formatPrice(i.priceCents * i.quantity)}`
+    )
+    .join("\n");
+}
+
+function addressLines(a: Order["shippingAddress"]) {
+  return [
+    a.name,
+    a.line1,
+    a.line2,
+    `${a.postalCode} ${a.city}`,
+    a.country,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+/** Notifie l'association + envoie une confirmation au client. Best-effort. */
+async function notifyOrder(order: Omit<Order, "id">) {
+  const commonFields = [
+    { label: "Total", value: formatPrice(order.amountTotalCents) },
+    { label: "E-mail client", value: order.customerEmail || "—" },
+    { label: "Livraison", value: addressLines(order.shippingAddress) },
+  ];
+  const itemsBody = { label: "Articles", value: itemLines(order.items) };
+
+  await Promise.allSettled([
+    sendMail({
+      subject: `Nouvelle commande — ${formatPrice(order.amountTotalCents)}`,
+      heading: "Nouvelle commande",
+      intro: "Une commande vient d'être payée sur la boutique.",
+      fields: commonFields,
+      body: itemsBody,
+      replyTo: order.customerEmail
+        ? { email: order.customerEmail, name: order.shippingAddress.name }
+        : undefined,
+    }),
+    order.customerEmail
+      ? sendMail({
+          to: order.customerEmail,
+          subject: "Votre commande Morphose Éditions est confirmée",
+          heading: "Commande confirmée",
+          intro:
+            "Merci pour votre commande ! Nous préparons votre colis et vous écrivons à l'expédition.",
+          fields: [
+            { label: "Total", value: formatPrice(order.amountTotalCents) },
+            {
+              label: "Adresse de livraison",
+              value: addressLines(order.shippingAddress),
+            },
+          ],
+          body: itemsBody,
+        })
+      : Promise.resolve(false),
+  ]);
+}
 
 export async function POST(req: Request) {
   const signature = req.headers.get("stripe-signature");
@@ -53,6 +116,7 @@ export async function POST(req: Request) {
     ) as { issueId: string; quantity: number }[];
 
     const orderItems: OrderItem[] = [];
+    let createdOrder: Omit<Order, "id"> | null = null;
 
     await db.runTransaction(async (tx) => {
       for (const item of requestedItems) {
@@ -100,7 +164,12 @@ export async function POST(req: Request) {
 
       const orderRef = db.collection("orders").doc();
       tx.set(orderRef, { ...order, id: orderRef.id });
+      createdOrder = order;
     });
+
+    if (createdOrder) {
+      await notifyOrder(createdOrder);
+    }
   }
 
   return NextResponse.json({ received: true });
