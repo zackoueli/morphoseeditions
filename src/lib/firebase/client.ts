@@ -1,7 +1,7 @@
 import { getApps, initializeApp, type FirebaseOptions } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getAuth } from "firebase/auth";
+import { getAuth, type Auth } from "firebase/auth";
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,8 +12,19 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-export const firebaseApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+export const firebaseApp = getApps().length
+  ? getApps()[0]
+  : initializeApp(firebaseConfig);
 
 export const db = getFirestore(firebaseApp);
 export const storage = getStorage(firebaseApp);
-export const auth = getAuth(firebaseApp);
+
+// getAuth() valide immédiatement la clé API et jette
+// `auth/invalid-api-key` si elle est absente. Comme l'auth n'est utilisée
+// que côté client (back-office), on l'instancie à la première utilisation
+// pour ne pas casser le build / le rendu serveur des pages publiques.
+let authInstance: Auth | null = null;
+export function getClientAuth(): Auth {
+  if (!authInstance) authInstance = getAuth(firebaseApp);
+  return authInstance;
+}
