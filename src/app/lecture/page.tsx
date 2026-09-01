@@ -11,8 +11,7 @@ export default async function LecturePage() {
   return (
     <div className="bg-paper text-ink">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <p className="font-marker text-2xl text-red">Lecture libre</p>
-        <h1 className="mt-2 font-display text-5xl tracking-wide">LECTURE</h1>
+        <h1 className="font-display text-5xl tracking-wide">LECTURE</h1>
         <p className="mt-4 max-w-2xl text-ink/60">
           Toutes nos revues se feuillettent gratuitement en ligne, dès leur
           sortie. Choisissez un numéro pour l&apos;ouvrir directement dans le

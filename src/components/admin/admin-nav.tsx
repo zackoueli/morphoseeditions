@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/admin/a-propos", label: "À propos" },
   { href: "/admin/libraires", label: "Libraires" },
   { href: "/admin/commandes", label: "Commandes" },
+  { href: "/admin/dons", label: "Contributions" },
 ];
 
 export function AdminNav() {

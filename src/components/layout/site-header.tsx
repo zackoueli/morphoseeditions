@@ -9,12 +9,42 @@ import { SearchBar } from "@/components/layout/search-bar";
 import { pickRandomHeaderTheme, type HeaderTheme } from "@/components/layout/header-themes";
 
 const NAV_LINKS = [
+  { href: "/actu", label: "Actu" },
   { href: "/catalogue", label: "Catalogue" },
   { href: "/lecture", label: "Lecture" },
-  { href: "/auteurs", label: "Nos auteurs" },
   { href: "/a-propos", label: "L'Association" },
   { href: "/libraires", label: "Libraires" },
 ];
+
+/** Caddie griffonné à la main, trait volontairement tremblé. */
+function ScribbleCartIcon() {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      className="h-6 w-6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {/* poignée + montant */}
+      <path d="M2.5 4.2c1.4-.4 2.7-.1 3.3 1 .5 1 .8 2.4 1.1 4.1" />
+      {/* corbeille, contour brouillon non fermé */}
+      <path d="M6.6 9.1c4.6-.7 9.6-1 15.1-.7 2.3.1 4.6.3 6.9.7-.7 2.6-1.5 5-2.6 7.6-.3.7-1 1.2-1.8 1.2-4.7.2-9 .3-13.1.1-.9 0-1.6-.6-1.8-1.4-.9-2.4-1.7-4.8-2.4-7.3" />
+      {/* barreaux verticaux tremblés */}
+      <path d="M12 9.4c.2 2.8.1 5.6-.2 8.3" />
+      <path d="M17.4 9.2c.1 2.9.1 5.8-.1 8.7" />
+      <path d="M22.6 9.4c-.3 2.7-.7 5.3-1.3 8" />
+      {/* barre horizontale */}
+      <path d="M7.6 13.2c5.7-.5 11.6-.6 17.7-.3" />
+      {/* roues */}
+      <path d="M12 24.2c.1.9-.6 1.7-1.5 1.7s-1.6-.7-1.6-1.6.6-1.7 1.5-1.7 1.5.7 1.6 1.6Z" />
+      <path d="M23.4 24.1c.1.9-.5 1.7-1.4 1.8-.9 0-1.6-.7-1.7-1.5 0-.9.6-1.7 1.5-1.8.9 0 1.5.6 1.6 1.5Z" />
+    </svg>
+  );
+}
 
 export function SiteHeader() {
   const { totalItems } = useCart();
@@ -99,14 +129,21 @@ export function SiteHeader() {
           <SearchBar />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/soutenir"
+            className="hidden items-center gap-2 rounded-full bg-saffron px-4 py-2 font-display text-sm tracking-wide text-ink transition hover:bg-saffron/80 sm:flex"
+          >
+            SOUTENIR
+          </Link>
           <Link
             href="/panier"
-            className="relative flex items-center gap-2 rounded-full bg-red px-4 py-2 font-display text-sm tracking-wide text-paper transition hover:bg-red-dark"
+            aria-label="Panier"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full bg-red text-paper transition hover:bg-red-dark"
           >
-            PANIER
+            <ScribbleCartIcon />
             {totalItems > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-saffron font-mono text-xs text-ink">
+              <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-saffron font-mono text-xs text-ink">
                 {totalItems}
               </span>
             )}
@@ -140,6 +177,13 @@ export function SiteHeader() {
               {link.label.toUpperCase()}
             </Link>
           ))}
+          <Link
+            href="/soutenir"
+            onClick={() => setOpen(false)}
+            className="py-3 font-display text-lg tracking-wide text-saffron"
+          >
+            SOUTENIR
+          </Link>
         </nav>
       )}
     </header>

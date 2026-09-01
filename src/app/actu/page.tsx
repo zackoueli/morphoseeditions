@@ -11,8 +11,7 @@ export default async function ActuPage() {
   return (
     <div className="bg-paper text-ink">
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-        <p className="font-marker text-2xl text-red">Le journal</p>
-        <h1 className="mt-2 font-display text-5xl tracking-wide">ACTU</h1>
+        <h1 className="font-display text-5xl tracking-wide">ACTU</h1>
 
         {posts.length === 0 ? (
           <p className="mt-16 text-ink/50">Aucune actualité pour le moment.</p>
