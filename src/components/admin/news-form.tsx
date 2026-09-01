@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { adminFetch } from "@/lib/admin-fetch";
 import { uploadFile } from "@/lib/storage-upload";
 import type { NewsPost } from "@/lib/types";
@@ -24,18 +24,57 @@ export function NewsForm({ post, postId }: { post?: NewsPost; postId?: string })
   const [published, setPublished] = useState(post?.published ?? false);
   const [coverImageUrl, setCoverImageUrl] = useState(post?.coverImageUrl ?? "");
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(
+    post?.galleryImageUrls ?? []
+  );
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const coverPreview = useMemo(
+    () => (coverFile ? URL.createObjectURL(coverFile) : null),
+    [coverFile]
+  );
+  useEffect(() => {
+    return () => {
+      if (coverPreview) URL.revokeObjectURL(coverPreview);
+    };
+  }, [coverPreview]);
+
+  const galleryPreviews = useMemo(
+    () => galleryFiles.map((file) => URL.createObjectURL(file)),
+    [galleryFiles]
+  );
+  useEffect(() => {
+    return () => {
+      galleryPreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [galleryPreviews]);
+
+  function addGalleryFiles(files: FileList | null) {
+    if (!files) return;
+    setGalleryFiles((prev) => [...prev, ...Array.from(files)]);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setError(null);
     try {
+      const workingId = postId ?? crypto.randomUUID();
+
       let finalCoverUrl = coverImageUrl || null;
       if (coverFile) {
-        const workingId = postId ?? crypto.randomUUID();
         finalCoverUrl = await uploadFile(`news/${workingId}/cover.jpg`, coverFile);
+      }
+
+      const uploadedGalleryUrls: string[] = [];
+      for (let i = 0; i < galleryFiles.length; i++) {
+        const url = await uploadFile(
+          `news/${workingId}/gallery/${Date.now()}-${i}.jpg`,
+          galleryFiles[i]
+        );
+        uploadedGalleryUrls.push(url);
       }
 
       const payload = {
@@ -44,6 +83,7 @@ export function NewsForm({ post, postId }: { post?: NewsPost; postId?: string })
         excerpt,
         content,
         coverImageUrl: finalCoverUrl,
+        galleryImageUrls: [...galleryUrls, ...uploadedGalleryUrls],
         published,
         publishedAt: post?.publishedAt ?? Date.now(),
       };
@@ -114,16 +154,112 @@ export function NewsForm({ post, postId }: { post?: NewsPost; postId?: string })
         />
       </label>
 
-      <label className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
+        <span className="text-sm text-ink/60">Image de couverture</span>
+        {(coverPreview || coverImageUrl) && (
+          <div className="group relative aspect-[16/9] w-full max-w-xs overflow-hidden rounded-md border-2 border-ink/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverPreview ?? coverImageUrl}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <span className="absolute left-1.5 top-1.5 rounded bg-ink/70 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-paper">
+              {coverPreview ? "Nouvelle" : "Actuelle"}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setCoverFile(null);
+                setCoverImageUrl("");
+              }}
+              className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-ink/80 text-xs text-paper opacity-0 transition group-hover:opacity-100"
+              aria-label="Retirer l'image de couverture"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+        <label className="cursor-pointer text-sm text-red hover:underline">
+          {coverPreview || coverImageUrl
+            ? "Changer l'image…"
+            : "Choisir une image…"}
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => setCoverFile(e.target.files?.[0] ?? null)}
+          />
+        </label>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <span className="text-sm text-ink/60">
-          Image de couverture {coverImageUrl && "— déjà envoyée"}
+          Galerie photo (affichées en carrousel sur l&apos;article)
         </span>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setCoverFile(e.target.files?.[0] ?? null)}
-        />
-      </label>
+
+        {(galleryUrls.length > 0 || galleryPreviews.length > 0) && (
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {galleryUrls.map((url) => (
+              <div
+                key={url}
+                className="group relative aspect-square overflow-hidden rounded-md border-2 border-ink/10"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGalleryUrls((urls) => urls.filter((u) => u !== url))
+                  }
+                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/80 text-xs text-paper opacity-0 transition group-hover:opacity-100"
+                  aria-label="Retirer cette image"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {galleryPreviews.map((url, i) => (
+              <div
+                key={url}
+                className="group relative aspect-square overflow-hidden rounded-md border-2 border-dashed border-red/40"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" className="h-full w-full object-cover" />
+                <span className="absolute left-1 top-1 rounded bg-red px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide text-paper">
+                  Nouvelle
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGalleryFiles((files) =>
+                      files.filter((_, idx) => idx !== i)
+                    )
+                  }
+                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-ink/80 text-xs text-paper opacity-0 transition group-hover:opacity-100"
+                  aria-label="Retirer cette image"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <label className="cursor-pointer text-sm text-red hover:underline">
+          Ajouter des images…
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              addGalleryFiles(e.target.files);
+              e.target.value = "";
+            }}
+          />
+        </label>
+      </div>
 
       <label className="flex items-center gap-2">
         <input

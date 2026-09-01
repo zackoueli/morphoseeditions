@@ -23,6 +23,7 @@ export type NewsPost = {
   excerpt: string;
   content: string;
   coverImageUrl: string | null;
+  galleryImageUrls: string[];
   published: boolean;
   publishedAt: number;
   createdAt: number;
@@ -92,5 +93,20 @@ export type Donation = {
   amountCents: number;
   donorEmail: string | null;
   stripeSessionId: string;
+  createdAt: number;
+};
+
+export type DonationMessage = {
+  id: string;
+  /** Mot laissé par le donateur (peut être vide si seulement une image). */
+  message: string;
+  /** Nom / signature optionnel. */
+  authorName: string;
+  /** URL Storage de la photo ou du dessin, null si message seul. */
+  imageUrl: string | null;
+  /** Type de média joint. */
+  kind: "photo" | "drawing" | null;
+  /** Session Stripe du don associé, null si non rattachée. */
+  stripeSessionId: string | null;
   createdAt: number;
 };

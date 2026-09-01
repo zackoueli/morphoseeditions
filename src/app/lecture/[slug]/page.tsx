@@ -55,8 +55,7 @@ export default async function LectureIssuePage({
           </div>
 
           <div className="text-center md:text-left">
-            <p className="font-marker text-xl text-red">Vous avez aimé cette revue ?</p>
-            <h2 className="mt-1 font-display text-2xl tracking-wide sm:text-3xl">
+            <h2 className="font-display text-2xl tracking-wide sm:text-3xl">
               SOUTENEZ MORPHOSE EN COMMANDANT L&apos;EXEMPLAIRE PAPIER
             </h2>
             <p className="mt-3 max-w-xl text-ink/60">

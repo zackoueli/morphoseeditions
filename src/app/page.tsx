@@ -1,13 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getPublishedIssues } from "@/lib/data/issues";
+import { getPublishedAuthors } from "@/lib/data/authors";
+import { getLatestNews } from "@/lib/data/news";
 import { IssueCard } from "@/components/catalogue/issue-card";
-import { JoinAssociationForm } from "@/components/association/join-form";
+import { AuthorsSection } from "@/components/home/authors-section";
+import { DonationWall } from "@/components/home/donation-wall";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const issues = await getPublishedIssues();
+  const [issues, authors, latestNews] = await Promise.all([
+    getPublishedIssues(),
+    getPublishedAuthors(),
+    getLatestNews(),
+  ]);
   const latest = issues.slice(0, 3);
 
   const featured = latest[0];
@@ -30,15 +37,14 @@ export default async function HomePage() {
                 Édition associative
               </span>
               <h1 className="mt-4 font-display text-5xl leading-[0.92] tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
-                <span className="text-saffron">DES REVUES</span>
+                <span className="text-saffron">SOUFFLE D&apos;ART</span>
                 <br />
-                <span className="text-red">QUI SE PARTAGENT.</span>
+                <span className="text-red">ÉCLECTIQUE.</span>
               </h1>
               <p className="mt-5 max-w-sm text-sm text-paper/75 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
-                Morphose Éditions publie chaque année une revue collective de
-                bandes dessinées et de poésie. Toutes nos publications se
-                feuillettent gratuitement en ligne — et se soutiennent en
-                papier.
+                Morphose est une maison d&apos;édition indépendante et
+                associative qui publie des livres d&apos;arts graphiques et
+                littéraires.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
@@ -48,10 +54,10 @@ export default async function HomePage() {
                   ▶ LIRE EN LIGNE
                 </Link>
                 <Link
-                  href="/a-propos"
-                  className="rounded-full border-2 border-paper/50 px-7 py-3.5 font-display text-base tracking-wide text-paper transition hover:border-saffron hover:text-saffron"
+                  href="/soutenir"
+                  className="rounded-full bg-saffron px-7 py-3.5 font-display text-base tracking-wide text-ink transition hover:bg-saffron/80"
                 >
-                  L&apos;ASSOCIATION
+                  SOUTENIR
                 </Link>
               </div>
             </div>
@@ -121,65 +127,57 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-t-2 border-paper/10 bg-ink">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:items-center">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-lg border-2 border-paper/10">
-            <Image
-              src="/images/about-placeholder.svg"
-              alt="Membres de l'association en atelier"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div>
-            <p className="font-marker text-2xl text-saffron">L&apos;association</p>
-            <h2 className="mt-2 font-display text-4xl tracking-wide text-paper">
-              UN COLLECTIF, PAS UNE MAISON D&apos;ÉDITION COMME LES AUTRES
-            </h2>
-            <p className="mt-4 text-paper/70">
-              Morphose Éditions est une association loi 1901 portée par des
-              auteur·rice·s, illustrateur·rice·s et poètes. Chaque revue est
-              une œuvre collective, imprimée en petite série et diffusée sans
-              barrière numérique : nos PDF sont en accès libre pour tout le
-              monde, dès leur sortie.
-            </p>
+      <AuthorsSection authors={authors} />
+
+      {latestNews && (
+        <section className="border-t-2 border-paper/10 bg-ink">
+          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+            <div className="mb-10 flex items-end justify-between">
+              <h2 className="font-display text-4xl tracking-wide text-paper">
+                ACTUALITÉ
+              </h2>
+              <Link
+                href="/actu"
+                className="font-display text-sm tracking-widest text-red hover:underline"
+              >
+                TOUTES LES ACTUS →
+              </Link>
+            </div>
+
             <Link
-              href="/a-propos"
-              className="mt-6 inline-block font-display text-sm tracking-widest text-red hover:underline"
+              href={`/actu/${latestNews.slug}`}
+              className="group grid gap-6 overflow-hidden rounded-lg border-2 border-paper/10 bg-paper/[0.03] transition hover:border-red sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
             >
-              DÉCOUVRIR L&apos;ASSOCIATION →
+              {latestNews.coverImageUrl && (
+                <div className="relative aspect-[16/10] overflow-hidden sm:aspect-auto">
+                  <Image
+                    src={latestNews.coverImageUrl}
+                    alt={latestNews.title}
+                    fill
+                    sizes="(min-width: 640px) 50vw, 100vw"
+                    className="object-cover transition duration-300 group-hover:scale-105"
+                  />
+                </div>
+              )}
+              <div className="flex flex-col justify-center p-6 sm:p-8">
+                <h3 className="font-display text-2xl tracking-wide text-paper">
+                  {latestNews.title}
+                </h3>
+                {latestNews.excerpt && (
+                  <p className="mt-3 line-clamp-3 text-paper/70">
+                    {latestNews.excerpt}
+                  </p>
+                )}
+                <span className="mt-5 font-display text-sm tracking-widest text-red">
+                  LIRE L&apos;ARTICLE →
+                </span>
+              </div>
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="relative overflow-hidden border-t-2 border-paper/10 bg-ink">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/images/hero-background.jpg)" }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/85 to-ink/70" />
-
-        <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
-          <span className="inline-block rounded-full border border-saffron/50 bg-ink/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-saffron backdrop-blur-sm">
-            L&apos;association recrute
-          </span>
-          <h2 className="mt-4 font-display text-4xl leading-[0.95] tracking-wide text-paper drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] sm:text-5xl">
-            REJOIGNEZ <span className="text-red">MORPHOSE ÉDITIONS</span>
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-sm text-paper/75 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
-            Illustration, écriture, mise en page, diffusion, événementiel...
-            dites-nous ce que vous pouvez apporter au collectif, on vous
-            recontacte.
-          </p>
-
-          <div className="mx-auto mt-10 max-w-xl text-left">
-            <JoinAssociationForm />
-          </div>
-        </div>
-
-        <div className="torn-edge relative h-4 bg-ink" />
-      </section>
+      <DonationWall />
     </>
   );
 }

@@ -4,6 +4,51 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { Author } from "@/lib/types";
 
+function splitRoles(role: string) {
+  return role
+    .split(",")
+    .map((r) => r.trim())
+    .filter(Boolean);
+}
+
+function RoleChips({
+  roles,
+  className = "",
+}: {
+  roles: string[];
+  className?: string;
+}) {
+  if (roles.length === 0) return null;
+  return (
+    <div className={`flex flex-wrap gap-1.5 ${className}`}>
+      {roles.map((role) => (
+        <span
+          key={role}
+          className="rounded-full border border-saffron/40 bg-ink/40 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-saffron/90"
+        >
+          {role}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function CardRoleChips({ roles }: { roles: string[] }) {
+  if (roles.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {roles.map((role) => (
+        <span
+          key={role}
+          className="rounded-full border border-saffron/40 bg-ink/50 px-2.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-saffron backdrop-blur-sm"
+        >
+          {role}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function instagramHref(value: string) {
   if (value.startsWith("http")) return value;
   const handle = value.replace(/^@/, "");
@@ -42,7 +87,40 @@ function WebIcon() {
   );
 }
 
-export function AuthorGallery({ authors }: { authors: Author[] }) {
+function AuthorCard({
+  author,
+  onSelect,
+}: {
+  author: Author;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className="group relative w-full max-w-[280px] overflow-hidden rounded-3xl border-2 border-paper/10 bg-paper/5 text-left shadow-[0_16px_40px_-16px_rgba(0,0,0,0.7)] transition hover:-translate-y-1 hover:border-red sm:w-[280px]"
+    >
+      <div className="relative aspect-[4/5] w-full overflow-hidden">
+        <Image
+          src={author.photoUrl}
+          alt={author.name}
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          className="object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-4">
+          <h3 className="font-display text-xl leading-none tracking-wide text-paper drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            {author.name}
+          </h3>
+          <CardRoleChips roles={splitRoles(author.role).slice(0, 3)} />
+        </div>
+      </div>
+    </button>
+  );
+}
+
+export function AuthorsSection({ authors }: { authors: Author[] }) {
   const [selected, setSelected] = useState<Author | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
@@ -62,38 +140,39 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
     };
   }, [selected, lightboxUrl]);
 
+  if (authors.length === 0) return null;
+
   return (
-    <>
-      <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {authors.map((author) => (
-          <button
-            key={author.id}
-            type="button"
-            onClick={() => setSelected(author)}
-            className="group flex flex-col overflow-hidden rounded-lg border-2 border-ink/10 bg-white text-left transition hover:-translate-y-1 hover:border-red"
-          >
-            <div className="relative aspect-square overflow-hidden bg-ink/5">
-              <Image
-                src={author.photoUrl}
-                alt={author.name}
-                fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                className="object-cover transition duration-300 group-hover:scale-105"
-              />
-            </div>
-            <div className="flex flex-1 flex-col gap-1 p-5">
-              <h2 className="font-display text-2xl tracking-wide text-ink">
-                {author.name}
-              </h2>
-              {author.role && (
-                <span className="text-sm text-ink/60">{author.role}</span>
-              )}
-              <span className="mt-auto pt-2 font-display text-xs tracking-widest text-red">
-                VOIR LE PROFIL →
-              </span>
-            </div>
-          </button>
-        ))}
+    <section
+      id="nos-auteurs"
+      className="relative scroll-mt-24 overflow-hidden border-t-2 border-paper/10 bg-ink"
+    >
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url(/_je_veux_un_fond_spaciale_noir_Nano_Banana_2_79265.png)",
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/80 to-ink" />
+
+      <div className="relative mx-auto max-w-6xl px-4 py-20 text-center sm:px-6">
+        <h2 className="font-display text-5xl tracking-wide text-paper sm:text-6xl">
+          NOS AUTEURS
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-lg text-paper/70">
+          De l&apos;illustration à la poésie, de la BD au collage.
+        </p>
+
+        <div className="mt-12 flex flex-wrap justify-center gap-6">
+          {authors.map((author) => (
+            <AuthorCard
+              key={author.id}
+              author={author}
+              onSelect={() => setSelected(author)}
+            />
+          ))}
+        </div>
       </div>
 
       {selected && (
@@ -123,11 +202,10 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
               <div className="absolute inset-0 bg-gradient-to-r from-ink/60 via-transparent to-transparent" />
 
               <div className="relative">
-                {selected.role && (
-                  <span className="inline-block w-fit rounded-full border border-saffron/50 bg-ink/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.2em] text-saffron backdrop-blur-sm">
-                    {selected.role}
-                  </span>
-                )}
+                <RoleChips
+                  roles={splitRoles(selected.role)}
+                  className="[&>span]:backdrop-blur-sm"
+                />
                 <h2 className="mt-4 font-display text-4xl leading-[0.95] tracking-wide text-paper drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)] sm:text-5xl">
                   {selected.name}
                 </h2>
@@ -235,6 +313,6 @@ export function AuthorGallery({ authors }: { authors: Author[] }) {
           </div>
         </div>
       )}
-    </>
+    </section>
   );
 }

@@ -21,5 +21,11 @@ service firebase.storage {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    match /donation-messages/{messageId}/{allPaths=**} {
+      // Écrit par l'API via l'Admin SDK ; supprimable par un admin.
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }

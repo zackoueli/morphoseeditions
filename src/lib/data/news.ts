@@ -19,6 +19,11 @@ export async function getPublishedNews(): Promise<NewsPost[]> {
     .sort((a, b) => b.publishedAt - a.publishedAt);
 }
 
+export async function getLatestNews(): Promise<NewsPost | null> {
+  const posts = await getPublishedNews();
+  return posts[0] ?? null;
+}
+
 export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
   const q = query(
     collection(db, NEWS_COLLECTION),
