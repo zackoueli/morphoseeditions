@@ -10,6 +10,7 @@ const MembershipSchema = z.object({
   email: z.string().email(),
   phone: z.string().max(40).optional().or(z.literal("")),
   address: z.string().max(1000).optional().or(z.literal("")),
+  message: z.string().max(5000).optional().or(z.literal("")),
 });
 
 export async function POST(req: Request) {
@@ -19,11 +20,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_input" }, { status: 400 });
   }
 
-  const { firstName, lastName, birthDate, email, phone, address } = parsed.data;
+  const { firstName, lastName, birthDate, email, phone, address, message } =
+    parsed.data;
 
-  await adminDb()
-    .collection("membershipApplications")
-    .add({ ...parsed.data, createdAt: Date.now() });
+  // La demande part par e-mail même si l'écriture Firestore échoue : on
+  // n'échoue pas la requête pour ne pas afficher une erreur alors que
+  // l'e-mail a bien été envoyé.
+  try {
+    await adminDb()
+      .collection("membershipApplications")
+      .add({ ...parsed.data, createdAt: Date.now() });
+  } catch (err) {
+    console.error("membership: échec de l'écriture Firestore", err);
+  }
 
   await sendMail({
     subject: `Nouvelle demande d'adhésion — ${firstName} ${lastName}`,
@@ -37,6 +46,7 @@ export async function POST(req: Request) {
       { label: "Téléphone", value: phone || "" },
       { label: "Adresse", value: address || "" },
     ],
+    body: { label: "Message", value: message || "" },
     replyTo: { email, name: `${firstName} ${lastName}` },
   });
 

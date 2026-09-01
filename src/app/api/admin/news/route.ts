@@ -9,6 +9,7 @@ const NewsInputSchema = z.object({
   excerpt: z.string().min(1),
   content: z.string().min(1),
   coverImageUrl: z.string().url().nullable(),
+  galleryImageUrls: z.array(z.string().url()).default([]),
   published: z.boolean(),
   publishedAt: z.number(),
 });

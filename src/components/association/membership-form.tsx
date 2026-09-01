@@ -26,6 +26,7 @@ export function MembershipForm() {
           email: form.get("email"),
           phone: form.get("phone"),
           address: form.get("address"),
+          message: form.get("message"),
         }),
       });
       if (!res.ok) throw new Error("failed");
@@ -72,6 +73,15 @@ export function MembershipForm() {
       <label className="flex flex-col gap-1">
         <span className={labelClass}>ADRESSE (FACULTATIF)</span>
         <textarea name="address" rows={3} className={fieldClass} />
+      </label>
+      <label className="flex flex-col gap-1">
+        <span className={labelClass}>MESSAGE (FACULTATIF)</span>
+        <textarea
+          name="message"
+          rows={5}
+          className={fieldClass}
+          placeholder="Ce que vous aimeriez apporter à l'association, vos motivations, vos compétences…"
+        />
       </label>
       {status === "error" && (
         <p className="text-sm text-red">

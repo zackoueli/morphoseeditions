@@ -10,6 +10,7 @@ import { pickRandomHeaderTheme, type HeaderTheme } from "@/components/layout/hea
 
 const NAV_LINKS = [
   { href: "/actu", label: "Actu" },
+  { href: "/#nos-auteurs", label: "Nos auteurs" },
   { href: "/catalogue", label: "Catalogue" },
   { href: "/lecture", label: "Lecture" },
   { href: "/a-propos", label: "L'Association" },

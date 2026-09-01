@@ -143,7 +143,10 @@ export function AuthorsSection({ authors }: { authors: Author[] }) {
   if (authors.length === 0) return null;
 
   return (
-    <section className="relative overflow-hidden border-t-2 border-paper/10 bg-ink">
+    <section
+      id="nos-auteurs"
+      className="relative scroll-mt-24 overflow-hidden border-t-2 border-paper/10 bg-ink"
+    >
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getNewsBySlug } from "@/lib/data/news";
+import { NewsCarousel } from "@/components/actu/news-carousel";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,11 @@ export default async function NewsPostPage({
   const { slug } = await params;
   const post = await getNewsBySlug(slug);
   if (!post) notFound();
+
+  const carouselImages = [
+    ...(post.coverImageUrl ? [post.coverImageUrl] : []),
+    ...(post.galleryImageUrls ?? []),
+  ];
 
   return (
     <div className="bg-paper text-ink">
@@ -26,10 +32,18 @@ export default async function NewsPostPage({
         <h1 className="mt-2 font-display text-4xl tracking-wide">
           {post.title}
         </h1>
-        {post.coverImageUrl && (
+        {carouselImages.length === 1 ? (
           <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-lg">
-            <Image src={post.coverImageUrl} alt="" fill className="object-cover" />
+            <Image
+              src={carouselImages[0]}
+              alt=""
+              fill
+              sizes="(min-width: 768px) 768px, 100vw"
+              className="object-cover"
+            />
           </div>
+        ) : (
+          <NewsCarousel images={carouselImages} title={post.title} />
         )}
         <div className="prose prose-neutral mt-8 max-w-none whitespace-pre-wrap">
           {post.content}

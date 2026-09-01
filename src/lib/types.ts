@@ -23,6 +23,7 @@ export type NewsPost = {
   excerpt: string;
   content: string;
   coverImageUrl: string | null;
+  galleryImageUrls: string[];
   published: boolean;
   publishedAt: number;
   createdAt: number;

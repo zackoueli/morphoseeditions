@@ -131,34 +131,48 @@ export default async function HomePage() {
 
       {latestNews && (
         <section className="border-t-2 border-paper/10 bg-ink">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:items-center">
-            <Link
-              href={`/actu/${latestNews.slug}`}
-              className="group relative aspect-[4/5] overflow-hidden rounded-lg border-2 border-paper/10 bg-ink/40"
-            >
-              {latestNews.coverImageUrl && (
-                <Image
-                  src={latestNews.coverImageUrl}
-                  alt={latestNews.title}
-                  fill
-                  className="object-cover transition duration-300 group-hover:scale-105"
-                />
-              )}
-            </Link>
-            <div>
+          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+            <div className="mb-10 flex items-end justify-between">
               <h2 className="font-display text-4xl tracking-wide text-paper">
-                {latestNews.title}
+                ACTUALITÉ
               </h2>
-              {latestNews.excerpt && (
-                <p className="mt-4 text-paper/70">{latestNews.excerpt}</p>
-              )}
               <Link
-                href={`/actu/${latestNews.slug}`}
-                className="mt-6 inline-block font-display text-sm tracking-widest text-red hover:underline"
+                href="/actu"
+                className="font-display text-sm tracking-widest text-red hover:underline"
               >
-                LIRE L&apos;ARTICLE →
+                TOUTES LES ACTUS →
               </Link>
             </div>
+
+            <Link
+              href={`/actu/${latestNews.slug}`}
+              className="group grid gap-6 overflow-hidden rounded-lg border-2 border-paper/10 bg-paper/[0.03] transition hover:border-red sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
+            >
+              {latestNews.coverImageUrl && (
+                <div className="relative aspect-[16/10] overflow-hidden sm:aspect-auto">
+                  <Image
+                    src={latestNews.coverImageUrl}
+                    alt={latestNews.title}
+                    fill
+                    sizes="(min-width: 640px) 50vw, 100vw"
+                    className="object-cover transition duration-300 group-hover:scale-105"
+                  />
+                </div>
+              )}
+              <div className="flex flex-col justify-center p-6 sm:p-8">
+                <h3 className="font-display text-2xl tracking-wide text-paper">
+                  {latestNews.title}
+                </h3>
+                {latestNews.excerpt && (
+                  <p className="mt-3 line-clamp-3 text-paper/70">
+                    {latestNews.excerpt}
+                  </p>
+                )}
+                <span className="mt-5 font-display text-sm tracking-widest text-red">
+                  LIRE L&apos;ARTICLE →
+                </span>
+              </div>
+            </Link>
           </div>
         </section>
       )}
