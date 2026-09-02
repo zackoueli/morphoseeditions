@@ -127,8 +127,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <AuthorsSection authors={authors} />
-
       {latestNews && (
         <section className="border-t-2 border-paper/10 bg-ink">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
@@ -176,6 +174,8 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <AuthorsSection authors={authors} />
 
       <DonationWall />
     </>

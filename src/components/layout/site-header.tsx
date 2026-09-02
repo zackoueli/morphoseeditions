@@ -96,21 +96,7 @@ export function SiteHeader() {
               />
             </span>
           ) : (
-            <>
-              <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-red">
-                <Image
-                  src="/logo.jpeg"
-                  alt="Morphose Éditions"
-                  fill
-                  sizes="44px"
-                  className="object-cover"
-                  priority
-                />
-              </span>
-              <span className="font-display text-2xl tracking-wide text-paper">
-                MORPHOSE
-              </span>
-            </>
+            <span className="h-10 w-[176px] shrink-0" aria-hidden />
           )}
         </Link>
 

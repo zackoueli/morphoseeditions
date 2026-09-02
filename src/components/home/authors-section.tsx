@@ -149,12 +149,10 @@ export function AuthorsSection({ authors }: { authors: Author[] }) {
     >
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url(/_je_veux_un_fond_spaciale_noir_Nano_Banana_2_79265.png)",
-        }}
+        style={{ backgroundImage: "url(/images/hero-background.jpg)" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/80 to-ink" />
+      <div className="absolute inset-0 bg-ink/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/85 to-ink" />
 
       <div className="relative mx-auto max-w-6xl px-4 py-20 text-center sm:px-6">
         <h2 className="font-display text-5xl tracking-wide text-paper sm:text-6xl">
