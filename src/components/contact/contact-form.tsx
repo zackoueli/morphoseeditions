@@ -10,21 +10,23 @@ export function ContactForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
-    const form = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const data = new FormData(form);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.get("name"),
-          email: form.get("email"),
-          message: form.get("message"),
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
         }),
       });
-      if (!res.ok) throw new Error("failed");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("sent");
-      e.currentTarget.reset();
-    } catch {
+      form.reset();
+    } catch (err) {
+      console.error("contact form:", err);
       setStatus("error");
     }
   }
