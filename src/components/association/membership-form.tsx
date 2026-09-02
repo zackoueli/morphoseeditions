@@ -14,25 +14,27 @@ export function MembershipForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
-    const form = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const data = new FormData(form);
     try {
       const res = await fetch("/api/membership", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          firstName: form.get("firstName"),
-          lastName: form.get("lastName"),
-          birthDate: form.get("birthDate"),
-          email: form.get("email"),
-          phone: form.get("phone"),
-          address: form.get("address"),
-          message: form.get("message"),
+          firstName: data.get("firstName"),
+          lastName: data.get("lastName"),
+          birthDate: data.get("birthDate"),
+          email: data.get("email"),
+          phone: data.get("phone"),
+          address: data.get("address"),
+          message: data.get("message"),
         }),
       });
-      if (!res.ok) throw new Error("failed");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("sent");
-      e.currentTarget.reset();
-    } catch {
+      form.reset();
+    } catch (err) {
+      console.error("membership form:", err);
       setStatus("error");
     }
   }
