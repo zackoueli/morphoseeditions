@@ -1,14 +1,12 @@
 # Politique de confidentialité
 
-*Document à compléter avec les informations réelles de l'association avant mise en ligne. Les champs entre crochets [xxx] sont à remplacer. Ce document est requis par le RGPD dès lors que le site collecte des données personnelles (formulaire de commande, newsletter, dons).*
-
 ## 1. Responsable du traitement
 
 Le responsable du traitement des données personnelles collectées sur ce site est :
 
-**[Nom de l'association]**
-[adresse du siège social]
-E-mail : [adresse e-mail de contact]
+**Morphose éditions**
+23, rue de Paris, 16000 Angoulême
+E-mail : morphoseeditions@gmail.com
 
 ## 2. Données collectées
 
@@ -20,18 +18,18 @@ Selon les fonctionnalités utilisées sur le site, les données suivantes peuven
 - Adresse postale de livraison
 - Historique des commandes
 
-*Les données de paiement (numéro de carte bancaire, etc.) ne sont jamais collectées ni stockées par [Nom de l'association] : elles sont directement traitées par notre prestataire de paiement, Stripe.*
+*Les données de paiement (numéro de carte bancaire, etc.) ne sont jamais collectées ni stockées par Morphose éditions : elles sont directement traitées par notre prestataire de paiement, Stripe.*
 
 **Lors d'un don** :
 - Nom, prénom (facultatif selon configuration Stripe)
 - Adresse e-mail
 - Montant du don
 
-**Lors de l'inscription à la newsletter** (si applicable) :
+**Lors de l'inscription à la newsletter** :
 - Adresse e-mail
 
 **Navigation sur le site** :
-- Données techniques (adresse IP, type de navigateur, pages consultées) via d'éventuels outils de mesure d'audience — *préciser l'outil utilisé le cas échéant (ex : Vercel Analytics, Plausible, Google Analytics) et compléter le bandeau de consentement cookies en conséquence.*
+- Données techniques (adresse IP, type de navigateur, pages consultées) via des outils de mesure d'audience — Vercel Analytics.
 
 ## 3. Finalités du traitement
 
@@ -54,9 +52,9 @@ Les traitements de données sont fondés sur :
 ## 5. Destinataires des données
 
 Les données collectées sont destinées exclusivement à :
-- L'équipe de [Nom de l'association] en charge du traitement des commandes et de la relation adhérent·e/client·e,
+- L'équipe de Morphose éditions en charge du traitement des commandes et de la relation adhérent·e/client·e,
 - Nos prestataires techniques strictement nécessaires au fonctionnement du site et au traitement des commandes :
-  - **Stripe** (traitement des paiements) — [lien vers la politique de confidentialité de Stripe],
+  - **Stripe** (traitement des paiements) — [https://stripe.com/fr/privacy](https://stripe.com/fr/privacy),
   - **Google Firebase / Google Cloud** (hébergement des données, base de données, stockage des fichiers),
   - **Vercel** (hébergement du site).
 
@@ -64,9 +62,9 @@ Ces prestataires peuvent être situés hors de l'Union européenne (notamment au
 
 ## 6. Durée de conservation
 
-- Données liées aux commandes : conservées pendant [durée légale de conservation des factures, généralement 10 ans pour les documents comptables] à des fins comptables et légales.
+- Données liées aux commandes : conservées pendant 10 ans à des fins comptables et légales.
 - Données liées à la newsletter : conservées jusqu'à désinscription.
-- Données de contact (formulaire) : conservées [durée à préciser, ex : 3 ans après le dernier contact].
+- Données de contact (formulaire) : conservées 3 ans après le dernier contact.
 
 ## 7. Droits des personnes
 
@@ -79,17 +77,15 @@ Conformément au Règlement Général sur la Protection des Données (RGPD) et �
 - Droit d'opposition,
 - Droit de définir des directives relatives au sort de ses données après son décès.
 
-Pour exercer ces droits, il suffit d'adresser une demande à [adresse e-mail de contact], accompagnée d'un justificatif d'identité si nécessaire. Une réponse sera apportée dans un délai maximum d'un mois.
+Pour exercer ces droits, il suffit d'adresser une demande à morphoseeditions@gmail.com, accompagnée d'un justificatif d'identité si nécessaire. Une réponse sera apportée dans un délai maximum d'un mois.
 
 En cas de désaccord persistant, chaque personne dispose également du droit d'introduire une réclamation auprès de la CNIL (Commission Nationale de l'Informatique et des Libertés) : [www.cnil.fr](https://www.cnil.fr).
 
 ## 8. Sécurité des données
 
-[Nom de l'association] met en œuvre des mesures techniques et organisationnelles appropriées (via ses prestataires Firebase et Stripe, certifiés sur les standards de sécurité du secteur) pour protéger les données personnelles contre toute perte, accès non autorisé, divulgation ou altération.
+Morphose éditions met en œuvre des mesures techniques et organisationnelles appropriées (via ses prestataires Firebase et Stripe, certifiés sur les standards de sécurité du secteur) pour protéger les données personnelles contre toute perte, accès non autorisé, divulgation ou altération.
 
 ## 9. Cookies
-
-*À adapter selon les outils réellement utilisés sur le site.*
 
 Le site peut utiliser des cookies strictement nécessaires à son fonctionnement (ex : gestion du panier d'achat, session Stripe Checkout) ainsi que, le cas échéant, des cookies de mesure d'audience soumis au consentement préalable de l'utilisateur·rice.
 
@@ -97,10 +93,10 @@ Un bandeau de consentement permet de gérer les préférences en matière de coo
 
 ## 10. Modifications de la politique de confidentialité
 
-[Nom de l'association] se réserve le droit de modifier la présente politique de confidentialité à tout moment, notamment pour se conformer à toute évolution réglementaire, technique ou jurisprudentielle. La version en vigueur est celle publiée sur le site à la date de consultation.
+Morphose éditions se réserve le droit de modifier la présente politique de confidentialité à tout moment, notamment pour se conformer à toute évolution réglementaire, technique ou jurisprudentielle. La version en vigueur est celle publiée sur le site à la date de consultation.
 
 ## 11. Contact
 
-Pour toute question relative à la présente politique de confidentialité ou à l'exercice de vos droits : [adresse e-mail de contact].
+Pour toute question relative à la présente politique de confidentialité ou à l'exercice de vos droits : morphoseeditions@gmail.com.
 
-*Dernière mise à jour : [date]*
+*Dernière mise à jour : septembre 2026*
