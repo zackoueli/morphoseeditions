@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path((?!api/).*)",
-        has: [{ type: "host", value: "morphoseditions.fr" }],
-        destination: "https://www.morphoseditions.fr/:path",
+        has: [{ type: "host", value: "morphoseeditions.fr" }],
+        destination: "https://www.morphoseeditions.fr/:path",
         permanent: true,
       },
     ];
