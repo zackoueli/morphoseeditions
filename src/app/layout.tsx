@@ -28,6 +28,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.morphoseeditions.fr"),
   title: "Morphose Éditions — Revues BD & Poésie",
   description:
     "Maison d'édition associative. Revues annuelles de bandes dessinées et de poésie, lecture libre en ligne, exemplaires papier à soutenir.",
