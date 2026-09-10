@@ -1,5 +1,6 @@
 import { getAboutPage } from "@/lib/data/news";
 import { MembershipForm } from "@/components/association/membership-form";
+import { RichText } from "@/components/shared/rich-text";
 
 export const metadata = { title: "À propos — Morphose Éditions" };
 export const dynamic = "force-dynamic";
@@ -12,12 +13,15 @@ export default async function AboutPage() {
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
         <h1 className="font-display text-5xl tracking-wide">À PROPOS</h1>
 
-        <div className="prose prose-neutral mt-8 max-w-none whitespace-pre-wrap">
-          {about?.content ??
+        <RichText
+          className="mt-8"
+          content={
+            about?.content ??
             `Morphose Éditions est une association loi 1901 qui publie chaque année une revue collective de bandes dessinées et de poésie.
 
-Cette page est gérée depuis le back-office de l'association — son contenu sera mis à jour prochainement.`}
-        </div>
+Cette page est gérée depuis le back-office de l'association — son contenu sera mis à jour prochainement.`
+          }
+        />
 
         <div className="mt-16 border-t-2 border-ink/10 pt-12">
           <h2 className="font-display text-3xl tracking-wide">

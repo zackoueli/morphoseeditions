@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { adminFetch } from "@/lib/admin-fetch";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 export default function AdminLibrairesPage() {
   const [content, setContent] = useState("");
@@ -46,12 +47,7 @@ export default function AdminLibrairesPage() {
         <p className="mt-8 text-ink/50">Chargement...</p>
       ) : (
         <div className="mt-8 flex max-w-2xl flex-col gap-4">
-          <textarea
-            rows={16}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
-          />
+          <RichTextEditor value={content} onChange={setContent} />
           {saved && <p className="text-sm text-teal">Enregistré.</p>}
           <button
             type="button"
