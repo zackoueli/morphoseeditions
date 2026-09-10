@@ -47,7 +47,11 @@ export default function AdminLibrairesPage() {
         <p className="mt-8 text-ink/50">Chargement...</p>
       ) : (
         <div className="mt-8 flex max-w-2xl flex-col gap-4">
-          <RichTextEditor value={content} onChange={setContent} />
+          <RichTextEditor
+            value={content}
+            onChange={setContent}
+            imageFolder="pages/libraires"
+          />
           {saved && <p className="text-sm text-teal">Enregistré.</p>}
           <button
             type="button"

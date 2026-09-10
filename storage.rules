@@ -12,6 +12,12 @@ service firebase.storage {
       allow write: if isAdmin();
     }
 
+    // Images insérées dans les pages éditoriales (À propos, Libraires…).
+    match /pages/{pageId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     match /news/{newsId}/{allPaths=**} {
       allow read: if true;
       allow write: if isAdmin();
