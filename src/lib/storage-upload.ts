@@ -5,9 +5,33 @@ import {
 } from "firebase/storage";
 import { storage } from "@/lib/firebase/client";
 
+const MAX_DIMENSION = 1600;
+const JPEG_QUALITY = 0.85;
+
+async function compressImage(file: File): Promise<Blob> {
+  const bitmap = await createImageBitmap(file);
+  const ratio = Math.min(MAX_DIMENSION / bitmap.width, MAX_DIMENSION / bitmap.height, 1);
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * ratio);
+  canvas.height = Math.round(bitmap.height * ratio);
+  const context = canvas.getContext("2d");
+  if (!context) return file;
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const blob: Blob | null = await new Promise((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY)
+  );
+  return blob ?? file;
+}
+
 export async function uploadFile(path: string, blob: Blob): Promise<string> {
+  const toUpload =
+    blob instanceof File && blob.type.startsWith("image/")
+      ? await compressImage(blob)
+      : blob;
   const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, blob);
+  await uploadBytes(storageRef, toUpload);
   return getDownloadURL(storageRef);
 }
 
