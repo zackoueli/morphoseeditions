@@ -35,7 +35,6 @@ export default function AdminIssuesPage() {
         <table className="mt-8 w-full border-collapse text-sm">
           <thead>
             <tr className="border-b-2 border-ink/10 text-left text-ink/50">
-              <th className="py-2">N°</th>
               <th className="py-2">Titre</th>
               <th className="py-2">Prix</th>
               <th className="py-2">Stock</th>
@@ -46,7 +45,6 @@ export default function AdminIssuesPage() {
           <tbody>
             {issues.map((issue) => (
               <tr key={issue.id} className="border-b border-ink/5">
-                <td className="py-3">{issue.issueNumber}</td>
                 <td className="py-3 font-medium">{issue.title}</td>
                 <td className="py-3">{formatPrice(issue.priceCents)}</td>
                 <td className="py-3">{issue.stock}</td>

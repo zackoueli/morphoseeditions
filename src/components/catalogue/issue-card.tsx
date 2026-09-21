@@ -46,7 +46,6 @@ export function IssueCard({ issue }: { issue: Issue }) {
           <div className="inline-block self-start rounded bg-ink/90 px-4 py-2 shadow-lg">
             <h3 className="font-display text-4xl uppercase leading-[0.9] tracking-wide text-saffron sm:text-5xl">
               {issue.title}
-              {issue.issueNumber ? ` N°${issue.issueNumber}` : ""}
             </h3>
           </div>
 

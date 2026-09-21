@@ -2,7 +2,6 @@ export type Issue = {
   id: string;
   slug: string;
   title: string;
-  issueNumber: number;
   description: string;
   description2: string;
   coverImageUrl: string;

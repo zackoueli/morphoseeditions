@@ -9,7 +9,7 @@ export async function GET() {
 
   const issues = snapshot.docs
     .map((d) => d.data())
-    .sort((a, b) => b.issueNumber - a.issueNumber);
+    .sort((a, b) => b.createdAt - a.createdAt);
 
   return NextResponse.json(issues);
 }

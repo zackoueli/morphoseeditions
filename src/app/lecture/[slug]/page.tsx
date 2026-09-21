@@ -26,10 +26,7 @@ export default async function LectureIssuePage({
         >
           ← TOUTES LES REVUES
         </Link>
-        <p className="mt-4 font-mono text-sm text-ink/50">
-          N°{issue.issueNumber}
-        </p>
-        <h1 className="mt-1 font-display text-4xl tracking-wide sm:text-5xl">
+        <h1 className="mt-4 font-display text-4xl tracking-wide sm:text-5xl">
           {issue.title}
         </h1>
       </div>

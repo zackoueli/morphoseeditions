@@ -21,10 +21,7 @@ export default async function IssuePage({
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
           <div>
-            <p className="font-mono text-sm text-ink/50">
-              N°{issue.issueNumber}
-            </p>
-            <h1 className="mt-1 font-display text-5xl tracking-wide">
+            <h1 className="font-display text-5xl tracking-wide">
               {issue.title}
             </h1>
             <p className="mt-6 text-ink/70">{issue.description}</p>

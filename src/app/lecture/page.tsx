@@ -38,9 +38,6 @@ export default async function LecturePage() {
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover transition duration-300 group-hover:scale-105"
                   />
-                  <span className="absolute left-3 top-3 rounded-full bg-ink px-3 py-1 font-mono text-xs text-paper">
-                    N°{issue.issueNumber}
-                  </span>
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-5">
                   <h2 className="font-display text-2xl tracking-wide text-ink">

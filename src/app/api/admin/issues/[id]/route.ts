@@ -6,7 +6,6 @@ import { requireAdminUser } from "@/lib/admin-auth";
 const IssueUpdateSchema = z.object({
   slug: z.string().min(1),
   title: z.string().min(1),
-  issueNumber: z.number().int().min(1),
   description: z.string().min(1),
   description2: z.string().default(""),
   coverImageUrl: z.string().url(),

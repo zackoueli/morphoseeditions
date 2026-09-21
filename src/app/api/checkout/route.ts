@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       price_data: {
         currency: "eur",
         product_data: {
-          name: `${issue.title} (n°${issue.issueNumber})`,
+          name: issue.title,
           images: issue.coverImageUrl ? [issue.coverImageUrl] : [],
         },
         unit_amount: issue.priceCents,

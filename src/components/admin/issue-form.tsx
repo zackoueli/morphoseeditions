@@ -10,7 +10,6 @@ import type { Issue } from "@/lib/types";
 type IssueFormValues = {
   slug: string;
   title: string;
-  issueNumber: number;
   description: string;
   description2: string;
   priceCents: number;
@@ -42,7 +41,6 @@ export function IssueForm({
   const [values, setValues] = useState<IssueFormValues>({
     slug: issue?.slug ?? "",
     title: issue?.title ?? "",
-    issueNumber: issue?.issueNumber ?? 1,
     description: issue?.description ?? "",
     description2: issue?.description2 ?? "",
     priceCents: issue?.priceCents ?? 1500,
@@ -147,30 +145,15 @@ export function IssueForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-2xl flex-col gap-5">
-      <div className="grid grid-cols-2 gap-4">
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-ink/60">Titre</span>
-          <input
-            required
-            value={values.title}
-            onChange={(e) => setValues((v) => ({ ...v, title: e.target.value }))}
-            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-ink/60">Numéro</span>
-          <input
-            type="number"
-            required
-            min={1}
-            value={values.issueNumber}
-            onChange={(e) =>
-              setValues((v) => ({ ...v, issueNumber: Number(e.target.value) }))
-            }
-            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
-          />
-        </label>
-      </div>
+      <label className="flex flex-col gap-1">
+        <span className="text-sm text-ink/60">Titre</span>
+        <input
+          required
+          value={values.title}
+          onChange={(e) => setValues((v) => ({ ...v, title: e.target.value }))}
+          className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+        />
+      </label>
 
       <label className="flex flex-col gap-1">
         <span className="text-sm text-ink/60">Slug (URL)</span>

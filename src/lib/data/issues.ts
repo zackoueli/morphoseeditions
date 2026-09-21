@@ -16,7 +16,7 @@ export async function getPublishedIssues(): Promise<Issue[]> {
   const snapshot = await getDocs(q);
   return snapshot.docs
     .map((d) => d.data() as Issue)
-    .sort((a, b) => b.issueNumber - a.issueNumber);
+    .sort((a, b) => b.createdAt - a.createdAt);
 }
 
 export async function getIssueBySlug(slug: string): Promise<Issue | null> {

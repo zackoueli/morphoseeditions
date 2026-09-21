@@ -93,13 +93,8 @@ export function SearchBar() {
                         className="object-cover"
                       />
                     </span>
-                    <span>
-                      <span className="block font-display text-sm tracking-wide text-paper">
-                        {issue.title}
-                      </span>
-                      <span className="block font-mono text-xs text-paper/40">
-                        N°{issue.issueNumber}
-                      </span>
+                    <span className="block font-display text-sm tracking-wide text-paper">
+                      {issue.title}
                     </span>
                   </Link>
                 </li>
