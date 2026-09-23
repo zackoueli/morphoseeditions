@@ -76,23 +76,35 @@ export default function AdminOrdersPage() {
               </ul>
 
               <p className="mt-3 text-sm text-ink/60">
-                {order.shippingAddress.name}
+                {order.customerName} — {order.customerPhone}
+              </p>
+              <p className="mt-1 text-sm text-ink/60">
+                <span className="text-ink/40">Point relais : </span>
+                {order.relayPoint.name}
                 <br />
-                {order.shippingAddress.line1}
-                {order.shippingAddress.line2 && (
-                  <>
-                    <br />
-                    {order.shippingAddress.line2}
-                  </>
-                )}
+                {order.relayPoint.line1}
                 <br />
-                {order.shippingAddress.postalCode} {order.shippingAddress.city}
-                , {order.shippingAddress.country}
+                {order.relayPoint.postalCode} {order.relayPoint.city}
               </p>
 
               <p className="mt-3 font-display text-lg text-red">
                 {formatPrice(order.amountTotalCents)}
               </p>
+
+              {order.sendcloudParcelId ? (
+                <a
+                  href="https://panel.sendcloud.sc/parcels"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-block text-sm text-teal underline"
+                >
+                  Colis créé dans Sendcloud (n°{order.sendcloudParcelId}) — imprimer l&apos;étiquette →
+                </a>
+              ) : (
+                <p className="mt-3 text-sm text-ink/40">
+                  Colis non créé automatiquement — à créer manuellement dans Sendcloud.
+                </p>
+              )}
             </div>
           ))}
         </div>

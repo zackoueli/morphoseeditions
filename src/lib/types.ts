@@ -58,13 +58,16 @@ export type OrderItem = {
   quantity: number;
 };
 
-export type ShippingAddress = {
+/** Point relais Mondial Relay choisi par le client au moment de la commande. */
+export type RelayPoint = {
+  id: string;
   name: string;
   line1: string;
-  line2?: string;
   postalCode: string;
   city: string;
   country: string;
+  /** "servicepoint" (commerçant) ou "locker" (consigne 24/7) — détermine la méthode d'expédition Sendcloud. */
+  shopType: "servicepoint" | "locker";
 };
 
 export type OrderStatus =
@@ -78,7 +81,13 @@ export type Order = {
   items: OrderItem[];
   amountTotalCents: number;
   shippingCents: number;
-  shippingAddress: ShippingAddress;
+  /** Nom + téléphone du client (mode point relais : pas d'adresse postale du client). */
+  customerName: string;
+  customerPhone: string;
+  /** Point relais Mondial Relay choisi — seul mode de livraison actuellement proposé. */
+  relayPoint: RelayPoint;
+  /** ID du colis créé automatiquement dans Sendcloud (étiquette à imprimer côté panel Sendcloud), null si échec/non configuré. */
+  sendcloudParcelId: number | null;
   customerEmail: string;
   status: OrderStatus;
   stripeSessionId: string;

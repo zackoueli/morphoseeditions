@@ -4,6 +4,15 @@ import { getStripe, SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
 import { adminDb } from "@/lib/firebase/admin";
 import type { Issue } from "@/lib/types";
 
+const RelayPointSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  line1: z.string(),
+  postalCode: z.string().min(1),
+  city: z.string().min(1),
+  country: z.string().min(1),
+});
+
 const CheckoutSchema = z.object({
   items: z
     .array(
@@ -13,6 +22,9 @@ const CheckoutSchema = z.object({
       })
     )
     .min(1),
+  customerName: z.string().trim().min(1).max(200),
+  customerPhone: z.string().trim().min(1).max(50),
+  relayPoint: RelayPointSchema,
 });
 
 export async function POST(req: Request) {
@@ -71,26 +83,28 @@ export async function POST(req: Request) {
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    // Managed Payments est activé par défaut sur le compte et interdit
-    // shipping_address_collection ; on le désactive pour cette requête.
+    // Managed Payments est activé par défaut sur le compte ; on le désactive
+    // pour cette requête (livraison en point relais, pas d'adresse postale).
     managed_payments: { enabled: false },
     line_items: [
       ...lineItems,
       {
         price_data: {
           currency: "eur",
-          product_data: { name: "Frais de port" },
+          product_data: { name: "Frais de port — Point relais" },
           unit_amount: SHIPPING_FLAT_RATE_CENTS,
         },
         quantity: 1,
       },
     ],
-    shipping_address_collection: { allowed_countries: ["FR", "BE", "CH", "LU"] },
     success_url: `${siteUrl}/panier/confirmation?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/panier`,
     metadata: {
       type: "issue_order",
       items: JSON.stringify(parsed.data.items),
+      customerName: parsed.data.customerName,
+      customerPhone: parsed.data.customerPhone,
+      relayPoint: JSON.stringify(parsed.data.relayPoint),
     },
   });
 

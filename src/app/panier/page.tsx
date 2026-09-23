@@ -4,15 +4,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
+import RelayPointPicker from "@/components/cart/relay-point-picker";
+import BookshopsNotice from "@/components/cart/bookshops-notice";
 import { formatPrice } from "@/lib/format";
 import { SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
+import type { RelayPoint } from "@/lib/types";
 
 export default function CartPage() {
   const { lines, setQuantity, removeItem, totalCents } = useCart();
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [relayPoint, setRelayPoint] = useState<RelayPoint | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleCheckout() {
+    if (!relayPoint) {
+      setError("Merci de choisir un point relais avant de continuer.");
+      return;
+    }
+    if (!customerName.trim() || !customerPhone.trim()) {
+      setError("Merci de renseigner votre nom et votre téléphone.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -24,6 +39,9 @@ export default function CartPage() {
             issueId: l.issueId,
             quantity: l.quantity,
           })),
+          customerName: customerName.trim(),
+          customerPhone: customerPhone.trim(),
+          relayPoint,
         }),
       });
       const data = await res.json();
@@ -128,6 +146,36 @@ export default function CartPage() {
             <span>Total</span>
             <span>{formatPrice(totalCents + SHIPPING_FLAT_RATE_CENTS)}</span>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <BookshopsNotice />
+        </div>
+
+        <div className="mt-8 flex flex-col gap-4">
+          <p className="font-display text-sm tracking-widest text-ink/70">
+            VOS COORDONNÉES
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <input
+              type="text"
+              placeholder="Nom et prénom"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="rounded border border-ink/20 px-3 py-2 text-sm"
+              required
+            />
+            <input
+              type="tel"
+              placeholder="Téléphone"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              className="rounded border border-ink/20 px-3 py-2 text-sm"
+              required
+            />
+          </div>
+
+          <RelayPointPicker value={relayPoint} onChange={setRelayPoint} />
         </div>
 
         {error && <p className="mt-4 text-sm text-red">{error}</p>}
