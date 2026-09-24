@@ -76,16 +76,22 @@ export default function AdminOrdersPage() {
               </ul>
 
               <p className="mt-3 text-sm text-ink/60">
-                {order.customerName} — {order.customerPhone}
+                {order.customerName || order.customerEmail} — {order.customerPhone}
               </p>
-              <p className="mt-1 text-sm text-ink/60">
-                <span className="text-ink/40">Point relais : </span>
-                {order.relayPoint.name}
-                <br />
-                {order.relayPoint.line1}
-                <br />
-                {order.relayPoint.postalCode} {order.relayPoint.city}
-              </p>
+              {order.relayPoint ? (
+                <p className="mt-1 text-sm text-ink/60">
+                  <span className="text-ink/40">Point relais : </span>
+                  {order.relayPoint.name}
+                  <br />
+                  {order.relayPoint.line1}
+                  <br />
+                  {order.relayPoint.postalCode} {order.relayPoint.city}
+                </p>
+              ) : (
+                <p className="mt-1 text-sm text-ink/40">
+                  Commande passée avant la mise en place des points relais — pas d&apos;infos de livraison structurées.
+                </p>
+              )}
 
               <p className="mt-3 font-display text-lg text-red">
                 {formatPrice(order.amountTotalCents)}
