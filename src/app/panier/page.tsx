@@ -29,7 +29,6 @@ function Cart() {
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [cartReminder, setCartReminder] = useState(false);
   const [relayPoint, setRelayPoint] = useState<RelayPoint | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -106,7 +105,6 @@ function Cart() {
           customerName: customerName.trim(),
           customerPhone: customerPhone.trim(),
           customerEmail: customerEmail.trim(),
-          cartReminder,
           relayPoint,
         }),
       });
@@ -264,18 +262,12 @@ function Cart() {
                 className="rounded border border-ink/20 px-3 py-2.5 text-base text-ink"
                 required
               />
+              <span className="text-xs text-ink/40">
+                Si vous ne terminez pas votre commande, nous vous enverrons un
+                seul e-mail de rappel avec un lien vers votre panier.
+              </span>
             </label>
           </div>
-          <label className="flex items-start gap-2 text-sm text-ink/60">
-            <input
-              type="checkbox"
-              checked={cartReminder}
-              onChange={(e) => setCartReminder(e.target.checked)}
-              className="mt-1"
-            />
-            Me rappeler mon panier par e-mail (une seule fois) si je ne termine
-            pas ma commande.
-          </label>
 
           <RelayPointPicker value={relayPoint} onChange={setRelayPoint} />
         </div>

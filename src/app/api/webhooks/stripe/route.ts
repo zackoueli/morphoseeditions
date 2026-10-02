@@ -70,12 +70,13 @@ async function notifyOrder(order: Omit<Order, "id">) {
 }
 
 /**
- * Rappel de panier : la session de paiement a expiré sans être payée. On n'écrit
- * qu'aux personnes qui ont coché la case de rappel dans le panier, une seule fois,
- * et jamais si elles ont finalement commandé entre-temps.
+ * Rappel de panier : la session de paiement a expiré sans être payée. Le panier
+ * prévient sous le champ e-mail qu'un rappel sera envoyé ; on n'écrit qu'une seule
+ * fois, et jamais si la personne a finalement commandé entre-temps.
  */
 async function remindAbandonedCart(session: Stripe.Checkout.Session) {
   if (session.metadata?.type !== "issue_order") return;
+  // "0" : sessions créées quand le rappel était une case à cocher, non cochée.
   if (session.metadata.cartReminder !== "1") return;
   const email = session.customer_email ?? session.customer_details?.email;
   if (!email) return;
@@ -123,7 +124,7 @@ async function remindAbandonedCart(session: Stripe.Checkout.Session) {
     subject: "Votre panier Morphose Éditions vous attend",
     heading: "Votre panier vous attend",
     intro:
-      "Vous avez commencé une commande sans la terminer. Votre sélection est toujours disponible : vous pouvez la reprendre en un clic. C'est le seul rappel que vous recevrez.",
+      "Vous avez commencé une commande sans la terminer. Votre sélection est toujours disponible : vous pouvez la reprendre en un clic. C'est le seul rappel que vous recevrez ; si vous ne souhaitez plus de message de notre part, répondez simplement à cet e-mail.",
     fields: [],
     body: {
       label: "Votre sélection",

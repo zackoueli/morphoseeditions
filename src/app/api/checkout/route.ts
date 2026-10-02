@@ -29,8 +29,6 @@ const CheckoutSchema = z.object({
   customerName: z.string().trim().min(1).max(200),
   customerPhone: z.string().trim().min(1).max(50),
   customerEmail: z.string().trim().email().max(200),
-  /** Le client a demandé un rappel par e-mail s'il ne termine pas sa commande. */
-  cartReminder: z.boolean().default(false),
   relayPoint: RelayPointSchema,
 });
 
@@ -112,7 +110,8 @@ export async function POST(req: Request) {
     metadata: {
       type: "issue_order",
       items: JSON.stringify(parsed.data.items),
-      cartReminder: parsed.data.cartReminder ? "1" : "0",
+      // Le panier annonce sous le champ e-mail qu'un rappel unique sera envoyé.
+      cartReminder: "1",
       customerName: parsed.data.customerName,
       customerPhone: parsed.data.customerPhone,
       relayPoint: JSON.stringify(parsed.data.relayPoint),

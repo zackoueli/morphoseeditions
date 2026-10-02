@@ -36,7 +36,7 @@ Selon les fonctionnalités utilisées sur le site, les données suivantes peuven
 
 Les données collectées sont utilisées pour :
 - Traiter et livrer les commandes de revues, et informer l'acheteur·se de leur suivi (confirmation, expédition, message après réception),
-- Envoyer un unique e-mail de rappel de panier, uniquement si la personne a coché la case prévue à cet effet dans le panier,
+- Envoyer un unique e-mail de rappel lorsqu'une commande commencée n'a pas été terminée (la personne en est informée sous le champ e-mail du panier et peut s'y opposer en répondant à cet e-mail),
 - Émettre les reçus de dons (et reçus fiscaux le cas échéant),
 - Répondre aux demandes de contact,
 - Envoyer la newsletter, si l'utilisateur·rice y a consenti,
@@ -48,8 +48,8 @@ Aucune donnée n'est utilisée à des fins de prospection commerciale sans conse
 
 Les traitements de données sont fondés sur :
 - **L'exécution d'un contrat** (traitement des commandes),
-- **Le consentement** (newsletter, rappel de panier),
-- **L'intérêt légitime** de l'association (statistiques de fréquentation, sécurité du site).
+- **Le consentement** (newsletter),
+- **L'intérêt légitime** de l'association (rappel unique d'une commande non terminée, statistiques de fréquentation, sécurité du site).
 
 ## 5. Destinataires des données
 
