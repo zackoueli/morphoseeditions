@@ -23,7 +23,18 @@ export default function AdminOrdersPage() {
 
   useEffect(reload, []);
 
-  async function updateStatus(id: string, status: OrderStatus) {
+  async function updateStatus(order: Order, status: OrderStatus) {
+    const { id } = order;
+    if (
+      status === "shipped" &&
+      !order.shippedAt &&
+      order.customerEmail &&
+      !window.confirm(
+        `Marquer la commande comme expédiée ? Un e-mail d'expédition (avec le lien de suivi) sera envoyé à ${order.customerEmail}.`
+      )
+    ) {
+      return;
+    }
     await adminFetch(`/api/admin/orders/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -54,7 +65,7 @@ export default function AdminOrdersPage() {
                 <select
                   value={order.status}
                   onChange={(e) =>
-                    updateStatus(order.id, e.target.value as OrderStatus)
+                    updateStatus(order, e.target.value as OrderStatus)
                   }
                   className="rounded-md border-2 border-ink/15 px-2 py-1 text-sm"
                 >
@@ -95,7 +106,33 @@ export default function AdminOrdersPage() {
 
               <p className="mt-3 font-display text-lg text-red">
                 {formatPrice(order.amountTotalCents)}
+                {order.shippingCents > 0 && (
+                  <span className="ml-2 font-sans text-xs text-ink/40">
+                    dont {formatPrice(order.shippingCents)} de port
+                  </span>
+                )}
               </p>
+
+              {order.shippedAt && (
+                <p className="mt-1 text-sm text-ink/60">
+                  Expédiée le{" "}
+                  {new Date(order.shippedAt).toLocaleDateString("fr-FR")} —
+                  client prévenu par e-mail
+                  {order.trackingUrl && (
+                    <>
+                      {" · "}
+                      <a
+                        href={order.trackingUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-teal underline"
+                      >
+                        suivi
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
 
               {order.sendcloudParcelId ? (
                 <a

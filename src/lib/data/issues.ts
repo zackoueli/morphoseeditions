@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   collection,
   doc,
@@ -11,15 +12,17 @@ import type { Issue } from "@/lib/types";
 
 const ISSUES_COLLECTION = "issues";
 
-export async function getPublishedIssues(): Promise<Issue[]> {
+// cache() : une seule lecture Firestore par rendu, même si la page et ses
+// métadonnées (generateMetadata) demandent la même revue.
+export const getPublishedIssues = cache(async (): Promise<Issue[]> => {
   const q = query(collection(db, ISSUES_COLLECTION), where("published", "==", true));
   const snapshot = await getDocs(q);
   return snapshot.docs
     .map((d) => d.data() as Issue)
     .sort((a, b) => b.createdAt - a.createdAt);
-}
+});
 
-export async function getIssueBySlug(slug: string): Promise<Issue | null> {
+export const getIssueBySlug = cache(async (slug: string): Promise<Issue | null> => {
   const q = query(
     collection(db, ISSUES_COLLECTION),
     where("slug", "==", slug),
@@ -28,7 +31,7 @@ export async function getIssueBySlug(slug: string): Promise<Issue | null> {
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
   return snapshot.docs[0].data() as Issue;
-}
+});
 
 export async function getIssueById(id: string): Promise<Issue | null> {
   const snap = await getDoc(doc(db, ISSUES_COLLECTION, id));

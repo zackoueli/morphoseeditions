@@ -115,6 +115,31 @@ export async function searchRelayPoints(
 }
 
 /**
+ * Récupère le lien de suivi d'un colis Sendcloud (disponible une fois l'étiquette générée).
+ * Best-effort : retourne null si non configuré, introuvable ou en cas d'échec.
+ */
+export async function getParcelTrackingUrl(parcelId: number): Promise<string | null> {
+  const creds = envCreds();
+  if (!creds) return null;
+
+  try {
+    const res = await fetch(`${API_BASE}/v2/parcels/${parcelId}`, {
+      headers: { Authorization: authHeader(creds.publicKey, creds.secretKey) },
+    });
+    if (!res.ok) {
+      console.error("getParcelTrackingUrl: Sendcloud a répondu", res.status);
+      return null;
+    }
+    const data = await res.json();
+    const url = data?.parcel?.tracking_url;
+    return typeof url === "string" && url.startsWith("http") ? url : null;
+  } catch (err) {
+    console.error("getParcelTrackingUrl: échec de l'appel Sendcloud", err);
+    return null;
+  }
+}
+
+/**
  * Crée automatiquement le colis dans Sendcloud (avec étiquette) pour un point relais donné.
  * Best-effort : ne jette jamais, retourne null si non configuré ou en cas d'échec (à créer
  * manuellement dans ce cas — le point relais reste visible dans l'admin et l'email).

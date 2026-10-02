@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { getStripe } from "@/lib/stripe";
+import { getStripe, SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
 import { adminDb } from "@/lib/firebase/admin";
-import { sendMail } from "@/lib/mail";
+import { sendMail, TO_EMAIL } from "@/lib/mail";
 import { formatPrice } from "@/lib/format";
+import { revalidatePublicPages } from "@/lib/revalidate";
 import { createRelayParcel, PARCEL_WEIGHT_PER_ITEM_G } from "@/lib/sendcloud";
 import type Stripe from "stripe";
 import type { Order, OrderItem } from "@/lib/types";
@@ -68,6 +69,79 @@ async function notifyOrder(order: Omit<Order, "id">) {
   ]);
 }
 
+/**
+ * Rappel de panier : la session de paiement a expiré sans être payée. On n'écrit
+ * qu'aux personnes qui ont coché la case de rappel dans le panier, une seule fois,
+ * et jamais si elles ont finalement commandé entre-temps.
+ */
+async function remindAbandonedCart(session: Stripe.Checkout.Session) {
+  if (session.metadata?.type !== "issue_order") return;
+  if (session.metadata.cartReminder !== "1") return;
+  const email = session.customer_email ?? session.customer_details?.email;
+  if (!email) return;
+
+  const db = adminDb();
+  const laterOrders = await db
+    .collection("orders")
+    .where("customerEmail", "==", email)
+    .get();
+  if (laterOrders.docs.some((d) => d.data().createdAt >= session.created * 1000)) {
+    return;
+  }
+
+  // create() échoue si le document existe : garantit un seul rappel par session,
+  // même si Stripe rejoue le webhook.
+  try {
+    await db
+      .collection("cartReminders")
+      .doc(session.id)
+      .create({ email, createdAt: Date.now() });
+  } catch {
+    return;
+  }
+
+  const requestedItems = JSON.parse(session.metadata.items ?? "[]") as {
+    issueId: string;
+    quantity: number;
+  }[];
+  if (requestedItems.length === 0) return;
+
+  const snapshots = await db.getAll(
+    ...requestedItems.map((i) => db.collection("issues").doc(i.issueId))
+  );
+  const available = requestedItems.filter((_, i) => {
+    const issue = snapshots[i].data();
+    return issue?.published && issue.stock > 0;
+  });
+  if (available.length === 0) return;
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const restore = available.map((i) => `${i.issueId}:${i.quantity}`).join(",");
+
+  await sendMail({
+    to: email,
+    subject: "Votre panier Morphose Éditions vous attend",
+    heading: "Votre panier vous attend",
+    intro:
+      "Vous avez commencé une commande sans la terminer. Votre sélection est toujours disponible : vous pouvez la reprendre en un clic. C'est le seul rappel que vous recevrez.",
+    fields: [],
+    body: {
+      label: "Votre sélection",
+      value: available
+        .map((i) => {
+          const issue = snapshots[requestedItems.indexOf(i)].data()!;
+          return `${i.quantity}× ${issue.title} — ${formatPrice(issue.priceCents * i.quantity)}`;
+        })
+        .join("\n"),
+    },
+    cta: {
+      label: "Reprendre ma commande",
+      url: `${siteUrl}/panier?reprise=${encodeURIComponent(restore)}`,
+    },
+    replyTo: { email: TO_EMAIL, name: "Morphose Éditions" },
+  });
+}
+
 export async function POST(req: Request) {
   const signature = req.headers.get("stripe-signature");
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -83,6 +157,11 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch {
     return NextResponse.json({ error: "invalid_signature" }, { status: 400 });
+  }
+
+  if (event.type === "checkout.session.expired") {
+    await remindAbandonedCart(event.data.object as Stripe.Checkout.Session);
+    return NextResponse.json({ received: true });
   }
 
   if (event.type !== "checkout.session.completed") {
@@ -143,7 +222,7 @@ export async function POST(req: Request) {
       const order: Omit<Order, "id"> = {
         items: orderItems,
         amountTotalCents: session.amount_total ?? 0,
-        shippingCents: 0,
+        shippingCents: SHIPPING_FLAT_RATE_CENTS,
         customerName: session.metadata?.customerName ?? "",
         customerPhone: session.metadata?.customerPhone ?? "",
         relayPoint,
@@ -166,6 +245,8 @@ export async function POST(req: Request) {
     });
 
     if (createdOrder && createdOrderId) {
+      // Le stock a changé : on rafraîchit les pages publiques mises en cache.
+      revalidatePublicPages();
       const order: Omit<Order, "id"> = createdOrder;
       const totalItems = order.items.reduce((sum, i) => sum + i.quantity, 0);
       const parcel = await createRelayParcel({

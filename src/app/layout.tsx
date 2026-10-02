@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Caveat, Inter, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -32,6 +33,12 @@ export const metadata: Metadata = {
   title: "Morphose Éditions — Revues BD & Poésie",
   description:
     "Maison d'édition associative. Revues annuelles de bandes dessinées et de poésie, lecture libre en ligne, exemplaires papier à soutenir.",
+  openGraph: {
+    siteName: "Morphose Éditions",
+    locale: "fr_FR",
+    type: "website",
+    images: ["/logo.jpeg"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -46,6 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1">{children}</main>
           <SiteFooter />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );

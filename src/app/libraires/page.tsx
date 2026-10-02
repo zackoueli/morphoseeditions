@@ -2,7 +2,8 @@ import { getLibrairesPage } from "@/lib/data/news";
 import { RichText } from "@/components/shared/rich-text";
 
 export const metadata = { title: "Libraires — Morphose Éditions" };
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
 
 export default async function LibrairesPage() {
   const page = await getLibrairesPage();

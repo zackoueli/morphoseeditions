@@ -2,29 +2,93 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { useCart } from "@/components/cart/cart-context";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useCart, type CartLine } from "@/components/cart/cart-context";
 import RelayPointPicker from "@/components/cart/relay-point-picker";
 import BookshopsNotice from "@/components/cart/bookshops-notice";
+import CartSuggestions from "@/components/cart/cart-suggestions";
 import { formatPrice } from "@/lib/format";
 import { SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
-import type { RelayPoint } from "@/lib/types";
+import type { Issue, RelayPoint } from "@/lib/types";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// useSearchParams impose une frontière Suspense pour que la page reste pré-rendue.
 export default function CartPage() {
-  const { lines, setQuantity, removeItem, totalCents } = useCart();
+  return (
+    <Suspense fallback={<div className="min-h-[60vh] bg-paper" />}>
+      <Cart />
+    </Suspense>
+  );
+}
+
+function Cart() {
+  const { lines, setQuantity, removeItem, replaceLines, totalCents } = useCart();
+  const router = useRouter();
   const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [cartReminder, setCartReminder] = useState(false);
   const [relayPoint, setRelayPoint] = useState<RelayPoint | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleCheckout() {
-    if (!relayPoint) {
-      setError("Merci de choisir un point relais avant de continuer.");
-      return;
+  // Lien « Reprendre ma commande » de l'e-mail de rappel : /panier?reprise=id:qté,id:qté
+  const restoreParam = useSearchParams().get("reprise");
+  const restoring = restoreParam !== null;
+
+  useEffect(() => {
+    if (!restoreParam) return;
+    let cancelled = false;
+
+    const wanted = new Map<string, number>();
+    for (const part of restoreParam.split(",")) {
+      const [issueId, quantity] = part.split(":");
+      const qty = Math.min(20, Math.floor(Number(quantity)));
+      if (issueId && qty >= 1) wanted.set(issueId, qty);
     }
+
+    fetch("/api/issues")
+      .then((res) => res.json())
+      .then((issues: Issue[]) => {
+        if (cancelled) return;
+        const restored: CartLine[] = issues
+          .filter((issue) => wanted.has(issue.id) && issue.stock > 0)
+          .map((issue) => ({
+            issueId: issue.id,
+            slug: issue.slug,
+            title: issue.title,
+            priceCents: issue.priceCents,
+            coverImageUrl: issue.coverImageUrl,
+            quantity: Math.min(wanted.get(issue.id)!, issue.stock),
+          }));
+        if (restored.length > 0) replaceLines(restored);
+      })
+      .catch(() => {
+        // reprise impossible : on garde le panier déjà présent sur cet appareil
+      })
+      .finally(() => {
+        // retire le paramètre de l'URL : un rechargement ne doit pas écraser le panier
+        if (!cancelled) router.replace("/panier");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [restoreParam, replaceLines, router]);
+
+  async function handleCheckout() {
     if (!customerName.trim() || !customerPhone.trim()) {
       setError("Merci de renseigner votre nom et votre téléphone.");
+      return;
+    }
+    if (!EMAIL_PATTERN.test(customerEmail.trim())) {
+      setError("Merci de renseigner une adresse e-mail valide.");
+      return;
+    }
+    if (!relayPoint) {
+      setError("Merci de choisir un point relais avant de continuer.");
       return;
     }
 
@@ -41,6 +105,8 @@ export default function CartPage() {
           })),
           customerName: customerName.trim(),
           customerPhone: customerPhone.trim(),
+          customerEmail: customerEmail.trim(),
+          cartReminder,
           relayPoint,
         }),
       });
@@ -68,7 +134,7 @@ export default function CartPage() {
       <div className="bg-paper text-ink">
         <div className="mx-auto max-w-2xl px-4 py-24 text-center sm:px-6">
           <h1 className="font-display text-4xl tracking-wide">
-            VOTRE PANIER EST VIDE
+            {restoring ? "CHARGEMENT DE VOTRE PANIER…" : "VOTRE PANIER EST VIDE"}
           </h1>
           <Link
             href="/catalogue"
@@ -139,16 +205,20 @@ export default function CartPage() {
             <span>{formatPrice(totalCents)}</span>
           </div>
           <div className="flex justify-between text-ink/60">
-            <span>Frais de port</span>
+            <span>Livraison en point relais Mondial Relay</span>
             <span>{formatPrice(SHIPPING_FLAT_RATE_CENTS)}</span>
           </div>
+          <p className="text-xs text-ink/40">
+            Frais de port fixes, quel que soit le nombre de revues.
+          </p>
           <div className="flex justify-between font-display text-2xl">
             <span>Total</span>
             <span>{formatPrice(totalCents + SHIPPING_FLAT_RATE_CENTS)}</span>
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 flex flex-col gap-4">
+          <CartSuggestions />
           <BookshopsNotice />
         </div>
 
@@ -157,28 +227,64 @@ export default function CartPage() {
             VOS COORDONNÉES
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
-            <input
-              type="text"
-              placeholder="Nom et prénom"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="rounded border border-ink/20 px-3 py-2 text-sm"
-              required
-            />
-            <input
-              type="tel"
-              placeholder="Téléphone"
-              value={customerPhone}
-              onChange={(e) => setCustomerPhone(e.target.value)}
-              className="rounded border border-ink/20 px-3 py-2 text-sm"
-              required
-            />
+            <label className="flex flex-col gap-1 text-sm text-ink/60">
+              Nom et prénom
+              <input
+                type="text"
+                name="name"
+                autoComplete="name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="rounded border border-ink/20 px-3 py-2.5 text-base text-ink"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm text-ink/60">
+              Téléphone
+              <input
+                type="tel"
+                name="tel"
+                autoComplete="tel"
+                inputMode="tel"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                className="rounded border border-ink/20 px-3 py-2.5 text-base text-ink"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm text-ink/60 sm:col-span-2">
+              E-mail (confirmation et suivi du colis)
+              <input
+                type="email"
+                name="email"
+                autoComplete="email"
+                inputMode="email"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                className="rounded border border-ink/20 px-3 py-2.5 text-base text-ink"
+                required
+              />
+            </label>
           </div>
+          <label className="flex items-start gap-2 text-sm text-ink/60">
+            <input
+              type="checkbox"
+              checked={cartReminder}
+              onChange={(e) => setCartReminder(e.target.checked)}
+              className="mt-1"
+            />
+            Me rappeler mon panier par e-mail (une seule fois) si je ne termine
+            pas ma commande.
+          </label>
 
           <RelayPointPicker value={relayPoint} onChange={setRelayPoint} />
         </div>
 
-        {error && <p className="mt-4 text-sm text-red">{error}</p>}
+        {error && (
+          <p role="alert" className="mt-4 text-sm text-red">
+            {error}
+          </p>
+        )}
 
         <button
           type="button"
@@ -188,6 +294,14 @@ export default function CartPage() {
         >
           {loading ? "REDIRECTION..." : "PASSER LA COMMANDE"}
         </button>
+        <p className="mt-3 text-center text-xs text-ink/50">
+          Paiement sécurisé par Stripe · Expédié sous 1 à 3 jours ouvrés ·
+          Rétractation 14 jours (
+          <Link href="/cgv" className="underline hover:text-red">
+            CGV
+          </Link>
+          )
+        </p>
       </div>
     </div>
   );

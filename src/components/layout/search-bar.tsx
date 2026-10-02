@@ -14,6 +14,15 @@ function SearchIcon() {
   );
 }
 
+/** Minuscules sans accents : « poesie » trouve « Poésie ». */
+function normalize(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+}
+
 export function SearchBar() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -41,14 +50,14 @@ export function SearchBar() {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
-  const q = query.trim().toLowerCase();
+  const q = normalize(query);
   const results =
     q.length === 0
       ? []
       : (issues ?? []).filter(
           (issue) =>
-            issue.title.toLowerCase().includes(q) ||
-            issue.description.toLowerCase().includes(q)
+            normalize(issue.title).includes(q) ||
+            normalize(issue.description).includes(q)
         );
 
   return (

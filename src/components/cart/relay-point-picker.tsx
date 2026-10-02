@@ -76,10 +76,13 @@ export default function RelayPointPicker({ value, onChange }: Props) {
             <input
               type="text"
               inputMode="numeric"
+              name="postal-code"
+              autoComplete="postal-code"
+              aria-label="Code postal"
               placeholder="Code postal"
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
-              className="w-32 rounded border border-ink/20 px-3 py-2 text-sm"
+              className="w-36 rounded border border-ink/20 px-3 py-2 text-base"
               required
             />
             <button

@@ -15,7 +15,8 @@ Selon les fonctionnalités utilisées sur le site, les données suivantes peuven
 **Lors d'une commande (achat de revue papier)** :
 - Nom, prénom
 - Adresse e-mail
-- Adresse postale de livraison
+- Numéro de téléphone (transmis au transporteur pour l'avis de mise à disposition du colis)
+- Point relais de livraison choisi
 - Historique des commandes
 
 *Les données de paiement (numéro de carte bancaire, etc.) ne sont jamais collectées ni stockées par Morphose éditions : elles sont directement traitées par notre prestataire de paiement, Stripe.*
@@ -29,12 +30,13 @@ Selon les fonctionnalités utilisées sur le site, les données suivantes peuven
 - Adresse e-mail
 
 **Navigation sur le site** :
-- Données techniques (adresse IP, type de navigateur, pages consultées) via des outils de mesure d'audience — Vercel Analytics.
+- Statistiques de fréquentation anonymes (pages consultées, type d'appareil, pays, site de provenance) via Vercel Analytics. Cet outil ne dépose aucun cookie et ne permet pas de suivre une personne d'une visite à l'autre.
 
 ## 3. Finalités du traitement
 
 Les données collectées sont utilisées pour :
-- Traiter et livrer les commandes de revues,
+- Traiter et livrer les commandes de revues, et informer l'acheteur·se de leur suivi (confirmation, expédition, message après réception),
+- Envoyer un unique e-mail de rappel de panier, uniquement si la personne a coché la case prévue à cet effet dans le panier,
 - Émettre les reçus de dons (et reçus fiscaux le cas échéant),
 - Répondre aux demandes de contact,
 - Envoyer la newsletter, si l'utilisateur·rice y a consenti,
@@ -46,7 +48,7 @@ Aucune donnée n'est utilisée à des fins de prospection commerciale sans conse
 
 Les traitements de données sont fondés sur :
 - **L'exécution d'un contrat** (traitement des commandes),
-- **Le consentement** (newsletter, cookies non essentiels),
+- **Le consentement** (newsletter, rappel de panier),
 - **L'intérêt légitime** de l'association (statistiques de fréquentation, sécurité du site).
 
 ## 5. Destinataires des données
@@ -56,7 +58,9 @@ Les données collectées sont destinées exclusivement à :
 - Nos prestataires techniques strictement nécessaires au fonctionnement du site et au traitement des commandes :
   - **Stripe** (traitement des paiements) — [https://stripe.com/fr/privacy](https://stripe.com/fr/privacy),
   - **Google Firebase / Google Cloud** (hébergement des données, base de données, stockage des fichiers),
-  - **Vercel** (hébergement du site).
+  - **Vercel** (hébergement du site, statistiques de fréquentation anonymes),
+  - **Sendcloud** et **Mondial Relay** (préparation et livraison des colis : nom, téléphone, e-mail, point relais),
+  - **Brevo** (envoi des e-mails liés aux commandes et aux formulaires).
 
 Ces prestataires peuvent être situés hors de l'Union européenne (notamment aux États-Unis). Dans ce cas, les transferts de données sont encadrés par les clauses contractuelles types de la Commission européenne ou tout autre mécanisme de conformité RGPD reconnu.
 
@@ -87,9 +91,9 @@ Morphose éditions met en œuvre des mesures techniques et organisationnelles ap
 
 ## 9. Cookies
 
-Le site peut utiliser des cookies strictement nécessaires à son fonctionnement (ex : gestion du panier d'achat, session Stripe Checkout) ainsi que, le cas échéant, des cookies de mesure d'audience soumis au consentement préalable de l'utilisateur·rice.
+Le site n'utilise que des éléments strictement nécessaires à son fonctionnement : le contenu du panier est conservé dans le navigateur (stockage local), et Stripe dépose ses propres cookies pendant le paiement.
 
-Un bandeau de consentement permet de gérer les préférences en matière de cookies non essentiels.
+La mesure d'audience (Vercel Analytics) fonctionne sans cookie. Le site n'utilise aucun cookie publicitaire ni traceur soumis à consentement : il n'y a donc pas de bandeau de consentement.
 
 ## 10. Modifications de la politique de confidentialité
 
@@ -99,4 +103,4 @@ Morphose éditions se réserve le droit de modifier la présente politique de co
 
 Pour toute question relative à la présente politique de confidentialité ou à l'exercice de vos droits : morphoseeditions@gmail.com.
 
-*Dernière mise à jour : septembre 2026*
+*Dernière mise à jour : octobre 2026*

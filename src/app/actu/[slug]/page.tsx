@@ -1,9 +1,44 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getNewsBySlug } from "@/lib/data/news";
+import type { Metadata } from "next";
+import { getNewsBySlug, getPublishedNews } from "@/lib/data/news";
 import { NewsCarousel } from "@/components/actu/news-carousel";
 
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const posts = await getPublishedNews().catch(() => []);
+  return posts.map((post) => ({ slug: post.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getNewsBySlug(slug);
+  if (!post) return {};
+
+  const title = `${post.title} — Morphose Éditions`;
+  const description = post.excerpt || undefined;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/actu/${post.slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `/actu/${post.slug}`,
+      siteName: "Morphose Éditions",
+      locale: "fr_FR",
+      type: "article",
+      publishedTime: new Date(post.publishedAt).toISOString(),
+      images: post.coverImageUrl ? [{ url: post.coverImageUrl }] : undefined,
+    },
+  };
+}
 
 export default async function NewsPostPage({
   params,

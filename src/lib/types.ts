@@ -92,6 +92,12 @@ export type Order = {
   status: OrderStatus;
   stripeSessionId: string;
   stripePaymentIntentId: string | null;
+  /** Date de passage au statut « expédiée » (absente sur les commandes antérieures au suivi). */
+  shippedAt?: number | null;
+  /** Lien de suivi Mondial Relay communiqué au client à l'expédition, null si indisponible. */
+  trackingUrl?: string | null;
+  /** Date d'envoi de l'e-mail « après réception », pour ne l'envoyer qu'une fois. */
+  followUpSentAt?: number | null;
   createdAt: number;
   updatedAt: number;
 };

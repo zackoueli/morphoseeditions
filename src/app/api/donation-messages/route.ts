@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicPages } from "@/lib/revalidate";
 import { z } from "zod";
 import { adminDb } from "@/lib/firebase/admin";
 import { getStripe } from "@/lib/stripe";
@@ -74,5 +75,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_image" }, { status: 400 });
   }
 
+  revalidatePublicPages();
   return NextResponse.json({ ok: true }, { status: 201 });
 }

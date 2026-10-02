@@ -1,6 +1,6 @@
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
-const TO_EMAIL = process.env.CONTACT_TO_EMAIL ?? "morphoseeditions@gmail.com";
+export const TO_EMAIL = process.env.CONTACT_TO_EMAIL ?? "morphoseeditions@gmail.com";
 
 // Palette Morphose (cf. tailwind.config / globals.css)
 const COLORS = {
@@ -23,6 +23,8 @@ type SendMailInput = {
   fields: MailField[];
   /** Bloc de texte libre affiché après les champs (ex. message de contact). */
   body?: { label: string; value: string };
+  /** Bouton d'action affiché sous le corps (ex. suivi de colis, reprise du panier). */
+  cta?: { label: string; url: string };
   /** Adresse de réponse (la personne qui a rempli le formulaire). */
   replyTo?: { email: string; name?: string };
   /** Destinataire ; par défaut CONTACT_TO_EMAIL (boîte de l'association). */
@@ -33,7 +35,8 @@ function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 const SERIF = "Georgia,'Times New Roman',serif";
@@ -53,10 +56,14 @@ function renderTemplate({
   intro,
   fields,
   body,
-}: Pick<SendMailInput, "heading" | "intro" | "fields" | "body">) {
+  cta,
+}: Pick<SendMailInput, "heading" | "intro" | "fields" | "body" | "cta">) {
   const bodyBlock = body
     ? `<p style="margin:0 0 6px;font-family:${MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${COLORS.red};">${escapeHtml(body.label)}</p>
        <div style="padding:14px 16px;background:#ffffff;border:1px solid rgba(13,9,6,0.15);border-radius:6px;font-family:${SERIF};font-size:15px;line-height:1.6;color:${COLORS.ink};white-space:pre-wrap;">${escapeHtml(body.value)}</div>`
+    : "";
+  const ctaBlock = cta
+    ? `<p style="margin:26px 0 0;"><a href="${escapeHtml(cta.url)}" style="display:inline-block;padding:14px 28px;background:${COLORS.red};border-radius:999px;font-family:${SERIF};font-weight:bold;font-size:15px;letter-spacing:0.04em;text-transform:uppercase;text-decoration:none;color:${COLORS.paper};">${escapeHtml(cta.label)}</a></p>`
     : "";
 
   return `<!doctype html>
@@ -81,6 +88,7 @@ function renderTemplate({
                 ${fields.map(fieldRow).join("\n")}
               </table>
               ${bodyBlock}
+              ${ctaBlock}
             </td>
           </tr>
           <!-- Pied -->
@@ -104,11 +112,15 @@ function renderText({
   intro,
   fields,
   body,
-}: Pick<SendMailInput, "heading" | "intro" | "fields" | "body">) {
+  cta,
+}: Pick<SendMailInput, "heading" | "intro" | "fields" | "body" | "cta">) {
   const lines = [heading, "", intro, ""];
   for (const f of fields) lines.push(`${f.label} : ${f.value || "—"}`);
   if (body) {
     lines.push("", `${body.label} :`, body.value);
+  }
+  if (cta) {
+    lines.push("", `${cta.label} : ${cta.url}`);
   }
   lines.push("", "— Message automatique, site Morphose Éditions");
   return lines.join("\n");
@@ -127,6 +139,7 @@ export async function sendMail({
   intro,
   fields,
   body,
+  cta,
   replyTo,
   to,
 }: SendMailInput): Promise<boolean> {
@@ -158,8 +171,8 @@ export async function sendMail({
           ? { email: replyTo.email, name: replyTo.name }
           : undefined,
         subject,
-        textContent: renderText({ heading, intro, fields, body }),
-        htmlContent: renderTemplate({ heading, intro, fields, body }),
+        textContent: renderText({ heading, intro, fields, body, cta }),
+        htmlContent: renderTemplate({ heading, intro, fields, body, cta }),
       }),
     });
 

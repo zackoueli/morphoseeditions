@@ -24,16 +24,18 @@ Les prix des revues sont indiqués en euros (€), toutes taxes comprises (TTC).
 
 TVA non applicable, art. 293 B du CGI.
 
-Les frais de livraison sont indiqués avant la validation finale de la commande et s'ajoutent au prix des produits. Ils sont calculés selon la zone géographique.
+Les frais de livraison sont indiqués sur la fiche de chaque revue et dans le panier, avant la validation finale de la commande, et s'ajoutent au prix des produits. Ils sont forfaitaires : 4,50 € par commande, quel que soit le nombre de revues.
 
 Morphose éditions se réserve le droit de modifier ses prix à tout moment, étant entendu que le prix applicable à la commande est celui en vigueur au moment de la validation de celle-ci.
 
 ## Article 4 — Commande
 
 Les commandes sont passées directement en ligne via le site. Le·la client·e sélectionne les produits souhaités, les ajoute à son panier, puis valide sa commande en renseignant :
-- ses coordonnées de contact,
-- son adresse de livraison,
+- ses coordonnées de contact (nom, téléphone, adresse e-mail),
+- le point relais Mondial Relay de son choix,
 - son moyen de paiement.
+
+Aucune création de compte n'est nécessaire.
 
 La commande n'est définitivement validée qu'après confirmation du paiement par notre prestataire de paiement (Stripe). Un e-mail de confirmation de commande est envoyé à l'acheteur·se à l'adresse renseignée.
 
@@ -49,19 +51,17 @@ La commande est considérée comme effective à compter de la confirmation de pa
 
 ## Article 6 — Livraison
 
-Les revues commandées sont expédiées à l'adresse postale indiquée par l'acheteur·se lors de la commande.
+Les revues commandées sont livrées par Mondial Relay dans le point relais (commerçant ou consigne automatique) choisi par l'acheteur·se lors de la commande. Il n'y a pas de livraison à domicile.
 
 Les commandes sont livrées en France métropolitaine.
 
-Les commandes sont préparées et expédiées dans un délai estimatif de 1 à 3 jours ouvrés à compter de la validation du paiement.
-
-Les expéditions sont effectuées par Mondial Relay à l'adresse indiquée par le client lors de la commande.
+Les commandes sont préparées et expédiées dans un délai estimatif de 1 à 3 jours ouvrés à compter de la validation du paiement. Un e-mail est envoyé à l'acheteur·se au moment de l'expédition, avec un lien de suivi lorsqu'il est disponible.
 
 Les frais de livraison sont de 4,50 € par commande. Le montant des frais de livraison est indiqué au client avant la validation définitive de sa commande.
 
 Le paiement des commandes est effectué en ligne via **Stripe**. Les informations relatives au paiement sont traitées de manière sécurisée par Stripe selon ses propres conditions et politiques de sécurité.
 
-Morphose éditions ne pourra être tenu·e responsable des retards de livraison imputables au transporteur, ni des erreurs de livraison dues à une adresse erronée fournie par l'acheteur·se.
+Morphose éditions ne pourra être tenu·e responsable des retards de livraison imputables au transporteur, ni des erreurs de livraison dues à des coordonnées erronées fournies par l'acheteur·se, ni d'un colis non retiré dans le délai de garde du point relais.
 
 En cas de colis endommagé, perdu ou non reçu, l'acheteur·se est invité·e à contacter morphoseeditions@gmail.com dans un délai de 10 jours à compter de la date de commande.
 
@@ -95,7 +95,7 @@ Toute réclamation relative à un produit défectueux ou non conforme doit être
 
 ## Article 11 — Données personnelles
 
-Les données personnelles collectées lors de la commande (nom, adresse, e-mail) sont utilisées uniquement dans le cadre du traitement de la commande et de la relation client. Pour plus de détails, voir la [Politique de confidentialité](/confidentialite).
+Les données personnelles collectées lors de la commande (nom, téléphone, e-mail, point relais choisi) sont utilisées uniquement dans le cadre du traitement de la commande et de la relation client. Pour plus de détails, voir la [Politique de confidentialité](/confidentialite).
 
 ## Article 12 — Médiation
 
@@ -109,4 +109,4 @@ Les présentes CGV sont soumises au droit français. En cas de litige, une solut
 
 Pour toute question relative à une commande, un don, ou aux présentes CGV : morphoseeditions@gmail.com.
 
-*Dernière mise à jour : septembre 2026*
+*Dernière mise à jour : octobre 2026*

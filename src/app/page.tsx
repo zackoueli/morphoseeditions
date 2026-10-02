@@ -6,8 +6,10 @@ import { getLatestNews } from "@/lib/data/news";
 import { IssueCard } from "@/components/catalogue/issue-card";
 import { AuthorsSection } from "@/components/home/authors-section";
 import { DonationWall } from "@/components/home/donation-wall";
+import { formatPrice } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
 
 export default async function HomePage() {
   const [issues, authors, latestNews] = await Promise.all([
@@ -22,9 +24,13 @@ export default async function HomePage() {
   return (
     <>
       <section className="relative -mt-[73px] overflow-hidden border-b-2 border-paper/10 bg-ink">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/images/hero-background.jpg)" }}
+        <Image
+          src="/images/hero-background.jpg"
+          alt=""
+          fill
+          preload
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-l from-ink/55 via-transparent to-transparent" />
@@ -66,11 +72,11 @@ export default async function HomePage() {
 
             {featured && (
               <div className="justify-self-end">
-                <Link
-                  href={`/lecture/${featured.slug}`}
-                  className="group block w-full max-w-[460px] overflow-hidden rounded-lg border border-paper/15 bg-ink/40 backdrop-blur-sm"
-                >
-                  <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <div className="group w-full max-w-[460px] overflow-hidden rounded-lg border border-paper/15 bg-ink/40 backdrop-blur-sm">
+                  <Link
+                    href={`/lecture/${featured.slug}`}
+                    className="relative block aspect-[3/4] w-full overflow-hidden"
+                  >
                     <Image
                       src={featured.coverImageUrl}
                       alt={featured.title}
@@ -78,7 +84,7 @@ export default async function HomePage() {
                       sizes="460px"
                       className="object-cover transition duration-300 group-hover:scale-105"
                     />
-                  </div>
+                  </Link>
                   <div className="p-6">
                     <p className="font-display text-sm tracking-[0.25em] text-saffron">
                       DERNIER NUMÉRO
@@ -86,11 +92,31 @@ export default async function HomePage() {
                     <p className="mt-1 font-display text-3xl tracking-wide text-paper">
                       {featured.title}
                     </p>
-                    <p className="mt-2 font-display text-base tracking-widest text-red">
-                      LIRE →
-                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2">
+                      <Link
+                        href={`/lecture/${featured.slug}`}
+                        className="font-display text-base tracking-widest text-red hover:underline"
+                      >
+                        LIRE →
+                      </Link>
+                      {featured.stock > 0 ? (
+                        <Link
+                          href={`/catalogue/${featured.slug}`}
+                          className="font-display text-base tracking-widest text-saffron hover:underline"
+                        >
+                          L&apos;EXEMPLAIRE PAPIER · {formatPrice(featured.priceCents)} →
+                        </Link>
+                      ) : (
+                        <Link
+                          href="/catalogue"
+                          className="font-display text-base tracking-widest text-saffron hover:underline"
+                        >
+                          PAPIER ÉPUISÉ · VOIR LES AUTRES REVUES →
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                </Link>
+                </div>
               </div>
             )}
           </div>

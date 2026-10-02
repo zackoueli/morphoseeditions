@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getStripe, SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
+import {
+  getStripe,
+  CHECKOUT_EXPIRY_SECONDS,
+  SHIPPING_FLAT_RATE_CENTS,
+} from "@/lib/stripe";
 import { adminDb } from "@/lib/firebase/admin";
 import type { Issue } from "@/lib/types";
 
@@ -24,6 +28,9 @@ const CheckoutSchema = z.object({
     .min(1),
   customerName: z.string().trim().min(1).max(200),
   customerPhone: z.string().trim().min(1).max(50),
+  customerEmail: z.string().trim().email().max(200),
+  /** Le client a demandé un rappel par e-mail s'il ne termine pas sa commande. */
+  cartReminder: z.boolean().default(false),
   relayPoint: RelayPointSchema,
 });
 
@@ -97,11 +104,15 @@ export async function POST(req: Request) {
         quantity: 1,
       },
     ],
+    // E-mail déjà saisi dans le panier : le client n'a pas à le retaper chez Stripe.
+    customer_email: parsed.data.customerEmail,
+    expires_at: Math.floor(Date.now() / 1000) + CHECKOUT_EXPIRY_SECONDS,
     success_url: `${siteUrl}/panier/confirmation?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/panier`,
     metadata: {
       type: "issue_order",
       items: JSON.stringify(parsed.data.items),
+      cartReminder: parsed.data.cartReminder ? "1" : "0",
       customerName: parsed.data.customerName,
       customerPhone: parsed.data.customerPhone,
       relayPoint: JSON.stringify(parsed.data.relayPoint),

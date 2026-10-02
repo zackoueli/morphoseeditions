@@ -3,7 +3,8 @@ import { MembershipForm } from "@/components/association/membership-form";
 import { RichText } from "@/components/shared/rich-text";
 
 export const metadata = { title: "À propos — Morphose Éditions" };
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
 
 export default async function AboutPage() {
   const about = await getAboutPage();

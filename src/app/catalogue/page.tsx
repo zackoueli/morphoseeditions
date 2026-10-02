@@ -2,9 +2,13 @@ import { getPublishedIssues } from "@/lib/data/issues";
 import { IssueCard } from "@/components/catalogue/issue-card";
 
 export const metadata = {
-  title: "Catalogue — Morphose Éditions",
+  title: "Catalogue — Revues de BD et de poésie | Morphose Éditions",
+  description:
+    "Toutes les revues de Morphose Éditions : bande dessinée, poésie et arts graphiques. Lecture gratuite en ligne, exemplaires papier en série limitée livrés en point relais.",
+  alternates: { canonical: "/catalogue" },
 };
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
 
 export default async function CataloguePage() {
   const issues = await getPublishedIssues();

@@ -3,7 +3,8 @@ import Image from "next/image";
 import { getPublishedNews } from "@/lib/data/news";
 
 export const metadata = { title: "Actu — Morphose Éditions" };
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
 
 export default async function ActuPage() {
   const posts = await getPublishedNews();

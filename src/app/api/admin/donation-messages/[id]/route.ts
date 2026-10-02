@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicPages } from "@/lib/revalidate";
 import { adminDb, adminStorage } from "@/lib/firebase/admin";
 import { requireAdminUser } from "@/lib/admin-auth";
 
@@ -27,5 +28,6 @@ export async function DELETE(
     .deleteFiles({ prefix: `donation-messages/${id}/` })
     .catch(() => {});
 
+  revalidatePublicPages();
   return NextResponse.json({ ok: true });
 }

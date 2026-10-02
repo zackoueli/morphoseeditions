@@ -1,12 +1,47 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getIssueBySlug } from "@/lib/data/issues";
+import type { Metadata } from "next";
+import { getIssueBySlug, getPublishedIssues } from "@/lib/data/issues";
 import { FlipbookViewer } from "@/components/catalogue/flipbook-viewer";
 import { AddToCartButton } from "@/components/catalogue/add-to-cart-button";
 import { formatPrice } from "@/lib/format";
+import { SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
 
-export const dynamic = "force-dynamic";
+// Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const issues = await getPublishedIssues().catch(() => []);
+  return issues.map((issue) => ({ slug: issue.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const issue = await getIssueBySlug(slug);
+  if (!issue) return {};
+
+  const title = `Lire ${issue.title} en ligne — Morphose Éditions`;
+  const description = `Feuilletez gratuitement ${issue.title} en ligne. ${issue.description}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/lecture/${issue.slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `/lecture/${issue.slug}`,
+      siteName: "Morphose Éditions",
+      locale: "fr_FR",
+      type: "website",
+      images: [{ url: issue.coverImageUrl, alt: `Couverture de ${issue.title}` }],
+    },
+  };
+}
 
 export default async function LectureIssuePage({
   params,
@@ -70,6 +105,11 @@ export default async function LectureIssuePage({
               </span>
               <AddToCartButton issue={issue} />
             </div>
+            <p className="mt-3 text-sm text-ink/60">
+              + {formatPrice(SHIPPING_FLAT_RATE_CENTS)} de livraison en point
+              relais Mondial Relay · expédié sous 1 à 3 jours ouvrés · paiement
+              sécurisé par Stripe
+            </p>
           </div>
         </div>
       </div>

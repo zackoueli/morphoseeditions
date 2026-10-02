@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicPages } from "@/lib/revalidate";
 import { z } from "zod";
 import { adminDb } from "@/lib/firebase/admin";
 import { requireAdminUser } from "@/lib/admin-auth";
@@ -53,5 +54,6 @@ export async function POST(req: Request) {
   const author = { ...parsed.data, id: ref.id, createdAt: now, updatedAt: now };
   await ref.set(author);
 
+  revalidatePublicPages();
   return NextResponse.json(author, { status: 201 });
 }

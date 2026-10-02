@@ -23,6 +23,8 @@ type CartContextValue = {
   addItem: (item: Omit<CartLine, "quantity">, quantity?: number) => void;
   removeItem: (issueId: string) => void;
   setQuantity: (issueId: string, quantity: number) => void;
+  /** Remplace tout le panier (reprise depuis le lien d'un e-mail de rappel). */
+  replaceLines: (lines: CartLine[]) => void;
   clear: () => void;
   totalCents: number;
   totalItems: number;
@@ -83,6 +85,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const replaceLines = useCallback((next: CartLine[]) => setLines(next), []);
+
   const clear = useCallback(() => setLines([]), []);
 
   const totalCents = useMemo(
@@ -95,8 +99,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ lines, addItem, removeItem, setQuantity, clear, totalCents, totalItems }),
-    [lines, addItem, removeItem, setQuantity, clear, totalCents, totalItems]
+    () => ({ lines, addItem, removeItem, setQuantity, replaceLines, clear, totalCents, totalItems }),
+    [lines, addItem, removeItem, setQuantity, replaceLines, clear, totalCents, totalItems]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

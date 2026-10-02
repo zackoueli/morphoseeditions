@@ -11,3 +11,6 @@ export function getStripe(): Stripe {
 }
 
 export const SHIPPING_FLAT_RATE_CENTS = 450;
+
+/** Durée de vie d'une session de paiement avant expiration (et rappel de panier éventuel). */
+export const CHECKOUT_EXPIRY_SECONDS = 60 * 60;

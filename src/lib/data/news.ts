@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   collection,
   doc,
@@ -24,7 +25,8 @@ export async function getLatestNews(): Promise<NewsPost | null> {
   return posts[0] ?? null;
 }
 
-export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
+// cache() : la page et generateMetadata partagent la même lecture Firestore.
+export const getNewsBySlug = cache(async (slug: string): Promise<NewsPost | null> => {
   const q = query(
     collection(db, NEWS_COLLECTION),
     where("slug", "==", slug),
@@ -33,7 +35,7 @@ export async function getNewsBySlug(slug: string): Promise<NewsPost | null> {
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
   return snapshot.docs[0].data() as NewsPost;
-}
+});
 
 export async function getAboutPage() {
   return getSettingsPage("about");

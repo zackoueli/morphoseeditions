@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicPages } from "@/lib/revalidate";
 import { z } from "zod";
 import { adminDb } from "@/lib/firebase/admin";
 import { requireAdminUser } from "@/lib/admin-auth";
@@ -40,5 +41,6 @@ export async function PUT(req: Request) {
     .doc("about")
     .set({ content: parsed.data.content, updatedAt: Date.now() });
 
+  revalidatePublicPages();
   return NextResponse.json({ ok: true });
 }

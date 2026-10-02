@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicPages } from "@/lib/revalidate";
 import { z } from "zod";
 import { adminDb } from "@/lib/firebase/admin";
 import { requireAdminUser } from "@/lib/admin-auth";
@@ -44,6 +45,7 @@ export async function PUT(
   await ref.update({ ...parsed.data, updatedAt: Date.now() });
   const snap = await ref.get();
 
+  revalidatePublicPages();
   return NextResponse.json(snap.data());
 }
 
@@ -59,5 +61,6 @@ export async function DELETE(
 
   const { id } = await params;
   await adminDb().collection("authors").doc(id).delete();
+  revalidatePublicPages();
   return NextResponse.json({ ok: true });
 }
