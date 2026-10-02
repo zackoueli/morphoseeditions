@@ -15,10 +15,13 @@ type IssueFormValues = {
   priceCents: number;
   stock: number;
   published: boolean;
+  readable: boolean;
   coverImageUrl: string;
   backgroundImageUrl: string;
   buttonColor: string;
   pageImageUrls: string[];
+  /** Saisie libre « 7, 18, 32 » ; vide = choix automatique à l'enregistrement. */
+  previewPages: string;
 };
 
 function slugify(input: string) {
@@ -46,10 +49,13 @@ export function IssueForm({
     priceCents: issue?.priceCents ?? 1500,
     stock: issue?.stock ?? 0,
     published: issue?.published ?? false,
+    // Produit existant sans ce champ : lisible s'il a déjà un PDF.
+    readable: issue ? (issue.readable ?? issue.pageImageUrls.length > 0) : true,
     coverImageUrl: issue?.coverImageUrl ?? "",
     backgroundImageUrl: issue?.backgroundImageUrl ?? "",
     buttonColor: issue?.buttonColor ?? "#dc2626",
     pageImageUrls: issue?.pageImageUrls ?? [],
+    previewPages: (issue?.previewPages ?? []).join(", "),
   });
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
@@ -115,6 +121,14 @@ export function IssueForm({
         coverImageUrl,
         backgroundImageUrl,
         pageImageUrls,
+        // Nouveau PDF : les anciens numéros ne correspondent plus, on laisse le choix automatique.
+        previewPages: pdfFile
+          ? []
+          : values.previewPages
+              .split(/[^0-9]+/)
+              .filter(Boolean)
+              .map(Number)
+              .filter((n) => n >= 1),
       };
 
       const res = issueId
@@ -230,6 +244,25 @@ export function IssueForm({
         <span className="text-sm">Publiée (visible sur le site)</span>
       </label>
 
+      <label className="flex items-start gap-2">
+        <input
+          type="checkbox"
+          checked={values.readable}
+          onChange={(e) =>
+            setValues((v) => ({ ...v, readable: e.target.checked }))
+          }
+          className="mt-1"
+        />
+        <span className="text-sm">
+          Se lit en ligne (apparaît dans la rubrique Lecture)
+          <span className="block text-xs text-ink/40">
+            À décocher pour un produit qui n&apos;est pas un livre ou une
+            revue : il reste en vente dans le catalogue, sans bouton de
+            lecture. Un PDF est nécessaire pour la lecture en ligne.
+          </span>
+        </span>
+      </label>
+
       <label className="flex flex-col gap-1">
         <span className="text-sm text-ink/60">
           Couverture (image) {values.coverImageUrl && "— déjà envoyée"}
@@ -287,6 +320,27 @@ export function IssueForm({
           revue longue.
         </span>
       </label>
+
+      {values.pageImageUrls.length > 0 && (
+        <label className="flex flex-col gap-1">
+          <span className="text-sm text-ink/60">
+            Pages mises en avant sur la fiche (numéros séparés par des virgules)
+          </span>
+          <input
+            value={values.previewPages}
+            placeholder="Choix automatique"
+            onChange={(e) =>
+              setValues((v) => ({ ...v, previewPages: e.target.value }))
+            }
+            className="rounded-md border-2 border-ink/15 px-3 py-2 outline-none focus:border-red"
+          />
+          <span className="text-xs text-ink/40">
+            Six pages donnent le meilleur rendu. Le numéro est la position de
+            la page dans le PDF (1 = couverture). Videz le champ pour laisser
+            le site choisir des pages illustrées.
+          </span>
+        </label>
+      )}
 
       {progress && <p className="text-sm text-teal">{progress}</p>}
       {error && <p className="text-sm text-red">{error}</p>}

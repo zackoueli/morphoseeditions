@@ -6,6 +6,7 @@ import { getIssueBySlug, getPublishedIssues } from "@/lib/data/issues";
 import { FlipbookViewer } from "@/components/catalogue/flipbook-viewer";
 import { AddToCartButton } from "@/components/catalogue/add-to-cart-button";
 import { formatPrice } from "@/lib/format";
+import { isReadableOnline } from "@/lib/issue-utils";
 import { SHIPPING_FLAT_RATE_CENTS } from "@/lib/stripe";
 
 // Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
@@ -13,7 +14,7 @@ export const revalidate = 300;
 
 export async function generateStaticParams() {
   const issues = await getPublishedIssues().catch(() => []);
-  return issues.map((issue) => ({ slug: issue.slug }));
+  return issues.filter(isReadableOnline).map((issue) => ({ slug: issue.slug }));
 }
 
 export async function generateMetadata({
@@ -23,7 +24,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const issue = await getIssueBySlug(slug);
-  if (!issue) return {};
+  if (!issue || !isReadableOnline(issue)) return {};
 
   const title = `Lire ${issue.title} en ligne — Morphose Éditions`;
   const description = `Feuilletez gratuitement ${issue.title} en ligne. ${issue.description}`;
@@ -50,7 +51,8 @@ export default async function LectureIssuePage({
 }) {
   const { slug } = await params;
   const issue = await getIssueBySlug(slug);
-  if (!issue) notFound();
+  // Produit qui ne se lit pas en ligne : pas de page de lecture.
+  if (!issue || !isReadableOnline(issue)) notFound();
 
   return (
     <div className="bg-paper text-ink">

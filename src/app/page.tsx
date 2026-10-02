@@ -7,6 +7,7 @@ import { IssueCard } from "@/components/catalogue/issue-card";
 import { AuthorsSection } from "@/components/home/authors-section";
 import { DonationWall } from "@/components/home/donation-wall";
 import { formatPrice } from "@/lib/format";
+import { isReadableOnline } from "@/lib/issue-utils";
 
 // Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
 export const revalidate = 300;
@@ -20,6 +21,7 @@ export default async function HomePage() {
   const latest = issues.slice(0, 3);
 
   const featured = latest[0];
+  const featuredReadable = featured ? isReadableOnline(featured) : false;
 
   return (
     <>
@@ -74,7 +76,7 @@ export default async function HomePage() {
               <div className="justify-self-end">
                 <div className="group w-full max-w-[460px] overflow-hidden rounded-lg border border-paper/15 bg-ink/40 backdrop-blur-sm">
                   <Link
-                    href={`/lecture/${featured.slug}`}
+                    href={`/${featuredReadable ? "lecture" : "catalogue"}/${featured.slug}`}
                     className="relative block aspect-[3/4] w-full overflow-hidden"
                   >
                     <Image
@@ -87,31 +89,36 @@ export default async function HomePage() {
                   </Link>
                   <div className="p-6">
                     <p className="font-display text-sm tracking-[0.25em] text-saffron">
-                      DERNIER NUMÉRO
+                      {featuredReadable ? "DERNIER NUMÉRO" : "DERNIÈRE SORTIE"}
                     </p>
                     <p className="mt-1 font-display text-3xl tracking-wide text-paper">
                       {featured.title}
                     </p>
                     <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2">
-                      <Link
-                        href={`/lecture/${featured.slug}`}
-                        className="font-display text-base tracking-widest text-red hover:underline"
-                      >
-                        LIRE →
-                      </Link>
+                      {featuredReadable && (
+                        <Link
+                          href={`/lecture/${featured.slug}`}
+                          className="font-display text-base tracking-widest text-red hover:underline"
+                        >
+                          LIRE →
+                        </Link>
+                      )}
                       {featured.stock > 0 ? (
                         <Link
                           href={`/catalogue/${featured.slug}`}
                           className="font-display text-base tracking-widest text-saffron hover:underline"
                         >
-                          L&apos;EXEMPLAIRE PAPIER · {formatPrice(featured.priceCents)} →
+                          {featuredReadable ? "L'EXEMPLAIRE PAPIER" : "COMMANDER"} ·{" "}
+                          {formatPrice(featured.priceCents)} →
                         </Link>
                       ) : (
                         <Link
                           href="/catalogue"
                           className="font-display text-base tracking-widest text-saffron hover:underline"
                         >
-                          PAPIER ÉPUISÉ · VOIR LES AUTRES REVUES →
+                          {featuredReadable
+                            ? "PAPIER ÉPUISÉ · VOIR LES AUTRES REVUES →"
+                            : "ÉPUISÉ · VOIR LE CATALOGUE →"}
                         </Link>
                       )}
                     </div>

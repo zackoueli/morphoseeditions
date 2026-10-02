@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPublishedIssues } from "@/lib/data/issues";
 import { getPublishedNews } from "@/lib/data/news";
+import { isReadableOnline } from "@/lib/issue-utils";
 
 const BASE_URL = "https://www.morphoseeditions.fr";
 
@@ -36,12 +37,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    {
-      url: `${BASE_URL}/lecture/${issue.slug}`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
+    ...(isReadableOnline(issue)
+      ? [
+          {
+            url: `${BASE_URL}/lecture/${issue.slug}`,
+            lastModified: now,
+            changeFrequency: "monthly" as const,
+            priority: 0.6,
+          },
+        ]
+      : []),
   ]);
 
   const newsRoutes: MetadataRoute.Sitemap = news.map((post) => ({

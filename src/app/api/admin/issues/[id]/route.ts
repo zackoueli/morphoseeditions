@@ -3,6 +3,7 @@ import { revalidatePublicPages } from "@/lib/revalidate";
 import { z } from "zod";
 import { adminDb } from "@/lib/firebase/admin";
 import { requireAdminUser } from "@/lib/admin-auth";
+import { resolvePreviewPages } from "@/lib/issue-previews";
 
 const IssueUpdateSchema = z.object({
   slug: z.string().min(1),
@@ -13,6 +14,10 @@ const IssueUpdateSchema = z.object({
   backgroundImageUrl: z.string().url().or(z.literal("")).default(""),
   buttonColor: z.string().default("#dc2626"),
   pageImageUrls: z.array(z.string().url()),
+  /** Affiché dans la rubrique Lecture. */
+  readable: z.boolean().default(true),
+  /** Pages mises en avant sur la fiche (numéros) ; vide = choix automatique. */
+  previewPages: z.array(z.number().int().min(1)).max(12).default([]),
   priceCents: z.number().int().min(0),
   stock: z.number().int().min(0),
   published: z.boolean(),
@@ -42,7 +47,11 @@ export async function PUT(
   }
 
   const ref = adminDb().collection("issues").doc(id);
-  await ref.update({ ...parsed.data, updatedAt: Date.now() });
+  const previewPages = await resolvePreviewPages(
+    parsed.data.previewPages,
+    parsed.data.pageImageUrls
+  );
+  await ref.update({ ...parsed.data, previewPages, updatedAt: Date.now() });
   const snap = await ref.get();
 
   revalidatePublicPages();

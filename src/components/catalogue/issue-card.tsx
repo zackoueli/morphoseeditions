@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Issue } from "@/lib/types";
 import { formatPrice } from "@/lib/format";
+import { isReadableOnline } from "@/lib/issue-utils";
 
 export function IssueCard({ issue }: { issue: Issue }) {
   const outOfStock = issue.stock <= 0;
@@ -69,7 +70,7 @@ export function IssueCard({ issue }: { issue: Issue }) {
             className="mt-1 flex w-full max-w-xs items-center justify-center rounded-md border-2 border-paper py-3 text-center font-display text-lg uppercase tracking-widest text-paper shadow-[0_5px_0_rgba(0,0,0,0.35)] transition group-hover:brightness-110 sm:text-xl"
             style={{ backgroundColor: buttonColor }}
           >
-            Acheter/Lire
+            {isReadableOnline(issue) ? "Acheter/Lire" : "Acheter"}
           </span>
         </div>
       </div>

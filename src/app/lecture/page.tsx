@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getPublishedIssues } from "@/lib/data/issues";
+import { isReadableOnline } from "@/lib/issue-utils";
 
 export const metadata = { title: "Lecture — Morphose Éditions" };
 // Page mise en cache ; rafraîchie à chaque modification (cf. lib/revalidate.ts).
 export const revalidate = 300;
 
 export default async function LecturePage() {
-  const issues = await getPublishedIssues();
+  const issues = (await getPublishedIssues()).filter(isReadableOnline);
 
   return (
     <div className="bg-paper text-ink">

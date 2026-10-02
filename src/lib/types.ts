@@ -8,6 +8,10 @@ export type Issue = {
   backgroundImageUrl: string;
   buttonColor: string;
   pageImageUrls: string[];
+  /** Affiché dans la rubrique Lecture (faux pour un produit qui ne se lit pas en ligne). Absent sur les anciens produits : voir isReadableOnline. */
+  readable?: boolean;
+  /** Numéros des pages mises en avant sur la fiche (1 = couverture). Absent sur les revues non réenregistrées. */
+  previewPages?: number[];
   priceCents: number;
   stock: number;
   published: boolean;
